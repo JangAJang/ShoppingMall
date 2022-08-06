@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.service;
 
+import com.studyProjectA.ShoppingMall.dto.LoginRequestDto;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
@@ -21,7 +22,7 @@ public class UserService {
     public User register(RegisterDto registerDto){
         User user = new User();
         user.setUsername(registerDto.getUsername());
-        user.setPassword(registerDto.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(registerDto.getPassword()));
         user.setEmail(registerDto.getEmail());
         user.setAddress(registerDto.getAddress());
         user.setRole("USER");

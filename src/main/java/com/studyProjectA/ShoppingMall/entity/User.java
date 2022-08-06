@@ -1,10 +1,12 @@
 package com.studyProjectA.ShoppingMall.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,26 @@ public class User {
 
     @Column(nullable = false)
     private String address;
+
+    @Column(nullable = true)
+    private String provider;
+
+    @Column(nullable = true)
+    private String providerId;
+
+
+
+    @Builder
+    public User(String username, String password, String email, String role, String provider, String providerId, String address) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.address = address;
+    }
 
     public List<String> getRoleList(){
         if(this.role.length() >0 ){
