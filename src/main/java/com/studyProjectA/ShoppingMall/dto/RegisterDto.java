@@ -10,14 +10,15 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterDto {
-    @NotNull
+    @NotNull(message = "username을 입력해주세요.")
     private String username;
 
-    @NotNull
+    @NotNull(message = "password를 입력해주세요.")
     private String password;
 
-    @NotNull
+    @NotNull(message = "email을 입력해주세요.")
     private String email;
-    @NotNull
+
+    @NotNull(message = "address를 입력해주세요.")
     private String address;
 }

@@ -25,6 +25,9 @@ public class UserService {
         user.setEmail(registerDto.getEmail());
         user.setAddress(registerDto.getAddress());
         user.setRole("ROLE_SER");
+
+        // 나중에 Return 해줄때 Dto 만들어서 해주세요
+        // --> pw 같은 민감 정보 그대로 노출되고, null 값인 필드를 굳이 리턴해줄 필요도 없음
         return userRepository.save(user);
     }
 
@@ -33,8 +36,9 @@ public class UserService {
     }
 
     public User findUser(int id){
-        return userRepository.findById(id).orElseThrow(()->{
-            return new IllegalArgumentException("해당 ID를 찾을 수 없습니다. ");
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            return new IllegalArgumentException("유저 정보를 찾을 수 없습니다.");
         });
+        return user;
     }
 }
