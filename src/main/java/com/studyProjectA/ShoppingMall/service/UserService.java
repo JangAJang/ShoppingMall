@@ -24,7 +24,7 @@ public class UserService {
         user.setPassword(registerDto.getPassword());
         user.setEmail(registerDto.getEmail());
         user.setAddress(registerDto.getAddress());
-        user.setRole("USER");
+        user.setRole("ROLE_SER");
         return userRepository.save(user);
     }
 
