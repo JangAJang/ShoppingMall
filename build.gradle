@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.3'
 	compileOnly 'org.projectlombok:lombok'

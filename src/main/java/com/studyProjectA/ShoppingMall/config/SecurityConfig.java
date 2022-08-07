@@ -39,13 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
                 .antMatchers("/user")
-                .access("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/shop")
-                .access("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/manager")
-                .access("hasRole('MANAGER') or hasRole('ADMIN')")
+                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/admin")
-                .access("hasRole('ADMIN')")
+                .access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll();
     }
 }
