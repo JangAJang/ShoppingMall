@@ -23,6 +23,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     CorsConfig corsConfig;
 
+    @Autowired
+    PrincipalOAuth2UserService principalOAuth2UserService;
+
     @Bean
     public BCryptPasswordEncoder encoder(){
         return new BCryptPasswordEncoder();
