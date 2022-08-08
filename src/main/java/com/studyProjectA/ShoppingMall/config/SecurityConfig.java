@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.config;
 
+import com.studyProjectA.ShoppingMall.oauth.PrincipalOAuth2UserService;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.jwt.JwtAuthenticationFilter;
 import com.studyProjectA.ShoppingMall.jwt.JwtAuthorizationFilter;
@@ -21,6 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     CorsConfig corsConfig;
+
+    @Autowired
+    PrincipalOAuth2UserService principalOAuth2UserService;
 
     @Bean
     public BCryptPasswordEncoder encoder(){
@@ -46,6 +50,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/admin")
                 .access("hasRole('ROLE_ADMIN')")
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/loginProc")    //로그인 주소 호출되면 security가 낚아챔.
+                .defaultSuccessUrl("/")
+                .and()
+                .oauth2Login()
+                .loginPage("/login") // 여기까지만 하면 후처리가 안돼서 로그인 후 창 이동이 안됨.
+                .userInfoEndpoint()
+                .userService(principalOAuth2UserService);
     }
 }
