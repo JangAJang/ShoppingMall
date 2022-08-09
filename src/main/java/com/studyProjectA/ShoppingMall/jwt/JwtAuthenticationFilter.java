@@ -30,6 +30,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             User user = om.readValue(request.getInputStream(), User.class);
             UsernamePasswordAuthenticationToken authenToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
             Authentication authentication = authenticationManager.authenticate(authenToken);
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            System.out.println(principalDetails);
             return authentication;
         }
         catch (IOException e){
@@ -46,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("id", principalDetails.getUser().getId())
                 .withClaim("username", principalDetails.getUser().getUsername())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        System.out.println(jwtToken);
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
-
     }
 }

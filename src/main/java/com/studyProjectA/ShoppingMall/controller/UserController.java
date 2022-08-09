@@ -25,7 +25,7 @@ public class UserController {
     @ApiOperation(value = "유저 찾기", notes = "개별 유저 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/users/{id}")
-    public Response findUser(@PathVariable("id") Integer id) {
+    public Response findUser(@PathVariable("id") int id) {
         return Response.success(userService.findUser(id));
     }
 
@@ -34,5 +34,12 @@ public class UserController {
     @PostMapping("/join")
     public Response register(@RequestBody RegisterDto registerDto) {
         return Response.success(userService.register(registerDto));
+    }
+
+    @ApiOperation(value = "관리자 페이지", notes = "관리자페이지 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/admin")
+    public Response admin(){
+        return Response.success();
     }
 }
