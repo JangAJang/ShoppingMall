@@ -1,6 +1,7 @@
 package com.studyProjectA.ShoppingMall.service;
 
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
+import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public User register(RegisterDto registerDto){
+    public UserDto register(RegisterDto registerDto){
         User user = new User();
         user.setUsername(registerDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(registerDto.getPassword()));
@@ -26,11 +27,8 @@ public class UserService {
         user.setAddress(registerDto.getAddress());
         user.setRole("ROLE_USER");
         System.out.println(user.getUsername());
-
-
-        // 나중에 Return 해줄때 Dto 만들어서 해주세요
-        // --> pw 같은 민감 정보 그대로 노출되고, null 값인 필드를 굳이 리턴해줄 필요도 없음
-        return userRepository.save(user);
+        userRepository.save(user);
+        return UserDto.toDto(user);
     }
 
     public List<User> findAll(){
