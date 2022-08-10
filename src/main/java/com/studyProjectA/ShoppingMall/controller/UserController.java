@@ -42,4 +42,20 @@ public class UserController {
     public Response admin(){
         return Response.success();
     }
+
+    @ApiOperation(value = "매니저 페이지", notes = "매니저페이지 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/manager")
+    public Response manager(){
+        return Response.success();
+    }
+
+    @ApiOperation(value = "등록 상품 목록", notes = "사용자가 등록한 상품을 표시합니다. ")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/users/my-products")
+    public Response showMyProducts(){
+        return Response.success();
+    }
+
+
 }
