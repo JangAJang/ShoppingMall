@@ -30,6 +30,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException{
         String jwtHeader = request.getHeader(JwtProperties.HEADER_STRING);
         if(jwtHeader == null || jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)){
+            System.out.println("Jwt Filter worked with JWT token");
             chain.doFilter(request, response);
             return;
         }
