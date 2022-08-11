@@ -30,19 +30,12 @@ public class Product {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
+    @Column
     private int quantity;
 
-    @Column(nullable = false)
+    @Column
     private String category;
 
-    @Column(nullable = false)
-    private long deliveryDate;
-
     @Column
-    private boolean isSoldOut;
-    public void isSoldOut() {
-        this.isSoldOut = true;
-    }
-    //품절 상태
+    private long deliveryDate;
 }
