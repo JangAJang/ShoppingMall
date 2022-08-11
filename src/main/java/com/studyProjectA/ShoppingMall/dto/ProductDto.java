@@ -1,7 +1,6 @@
 package com.studyProjectA.ShoppingMall.dto;
 
 import com.studyProjectA.ShoppingMall.entity.Product;
-import com.studyProjectA.ShoppingMall.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,8 @@ public class ProductDto {
     private String productName;
 
     @NotNull
-    private User userId;
+    private String userName;
+    //(질문) 왜 User이야???(우리가 String으로 바꿨어)
 
     @NotNull(message = "가격을 입력해주세요")
     private int price;
@@ -30,13 +30,14 @@ public class ProductDto {
     @NotNull(message = "카테고리를 선택해주세요")
     private String category;
 
+    @NotNull
     private long deliveryDate;
 
     public static ProductDto toDto(Product product){
         return new ProductDto(
                 product.getId(),
                 product.getProductName(),
-                product.getUserId(),
+                product.getUserId().getUsername(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getCategory(),
