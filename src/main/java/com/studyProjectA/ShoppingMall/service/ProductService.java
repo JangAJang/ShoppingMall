@@ -36,7 +36,7 @@ public class ProductService {
         return ProductDto.toDto(product);
     }
 
-    // 아이템 등록
+    // 아이템 등록.
     @Transactional
     public ProductDto addProduct(ProductDto productDto, User user){
         Product product = new Product();
