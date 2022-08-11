@@ -1,24 +1,29 @@
 package com.studyProjectA.ShoppingMall.entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Cart {
+public class CartItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "Product_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "User_id")
+    @JoinColumn(name = "Cart_id")
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User buyer;
+    private Cart cart;
 }
