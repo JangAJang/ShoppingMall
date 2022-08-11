@@ -27,10 +27,10 @@ public class ReviewDto {
     @NotNull
     private Product productId;
 
-    @NotNull
+    @NotNull(message = "점수를 등록해주세요")
     private int rate;
 
-    @NotNull
+    @NotNull(message = "리뷰 내용을 입력해주세요")
     private String comment;
 
     @NotNull

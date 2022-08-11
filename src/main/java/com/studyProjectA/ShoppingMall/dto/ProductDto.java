@@ -15,19 +15,19 @@ public class ProductDto {
     @NotNull
     private int id;
 
-    @NotNull
+    @NotNull(message = "제품명을 입력해주세요")
     private String productName;
 
     @NotNull
     private User userId;
 
-    @NotNull
+    @NotNull(message = "가격을 입력해주세요")
     private int price;
 
-    @NotNull
+    @NotNull(message = "수량을 입력해주세요")
     private int quantity;
 
-    @NotNull
+    @NotNull(message = "카테고리를 선택해주세요")
     private String category;
 
     private long deliveryDate;

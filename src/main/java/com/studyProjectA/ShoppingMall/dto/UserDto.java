@@ -15,19 +15,19 @@ public class UserDto {
     @NotNull
     private int id;
 
-    @NotNull
+    @NotNull(message = "아이디를 입력해주세요")
     private String username;
 
-    @NotNull
+    @NotNull(message = "비밀번호를 입력해주세요")
     private String password;
 
-    @NotNull
+    @NotNull(message = "이메일을 입력해주세요")
     private String email;
 
     @NotNull
     private String roll;
 
-    @NotNull
+    @NotNull(message = "주소를 입력해주세요")
     private String address;
 
     private String provider;
