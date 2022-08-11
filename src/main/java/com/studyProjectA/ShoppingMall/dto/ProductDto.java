@@ -19,7 +19,7 @@ public class ProductDto {
 
     @NotNull
     private String userName;
-    //(질문) 왜 User이야???(우리가 String으로 바꿨어)
+    //(질문) 왜 User이야???(우리가 String으로 바꿨어.)
 
     @NotNull
     private int price;
