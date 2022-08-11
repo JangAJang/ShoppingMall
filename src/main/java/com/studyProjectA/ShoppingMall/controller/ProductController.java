@@ -46,7 +46,7 @@ public class ProductController {
         User user = principalDetails.getUser();
         return Response.success(productService.addProduct(productDto, user));
     }
-    
+
 
     // 물품 수정
     @ApiOperation(value = "아이템 수정", notes = "아이템을 수정한다.")
