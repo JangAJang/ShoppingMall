@@ -17,7 +17,7 @@ Mentor : [이재윤](https://github.com/sosow0212)
 - [김태수](https://github.com/kimtaesoo99) | 맡은 역할 써
 - [박상혁](https://github.com/baksakcci) | 맡은 역할 써
 - [이재호](https://github.com/jjaeho) | 맡은 역할 써
-- [이장희](https://github.com/JangAJang) | 맡은 역할 써
+- [이장희](https://github.com/JangAJang) | JWT+User+Cart
 - [엄태인](https://github.com/eom-tae-in) | 맡은 역할 써
 ---
 # 4. Skill
