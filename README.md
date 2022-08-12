@@ -18,7 +18,7 @@ Mentor : [이재윤](https://github.com/sosow0212)
 - [박상혁](https://github.com/baksakcci) | 맡은 역할 써
 - [이재호](https://github.com/jjaeho) | 맡은 역할 써
 - [이장희](https://github.com/JangAJang) | 맡은 역할 써
-- [엄태인](https://githu.com/태인이주소) | 맡은 역할 써
+- [엄태인](https://github.com/eom-tae-in) | 맡은 역할 써
 ---
 # 4. Skill
 - JWT + Security (Json Web Token)

@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -19,7 +18,7 @@ public class CartItemDto {
 
     @NotNull
     private Cart cart;
-
+    
     public static CartItemDto toDto(CartItem cartItem){
         return new CartItemDto(
                 cartItem.getId(), cartItem.getCart()

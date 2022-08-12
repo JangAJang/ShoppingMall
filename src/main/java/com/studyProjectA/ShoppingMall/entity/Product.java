@@ -23,7 +23,7 @@ public class Product {
     private String productName;
 
     @JoinColumn(name = "User_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User userId;
 
