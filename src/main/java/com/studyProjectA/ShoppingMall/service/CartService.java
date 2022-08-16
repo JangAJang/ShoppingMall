@@ -24,7 +24,7 @@ public class CartService {
 
     @Transactional(readOnly = true)
     public List<CartItemDto> showMyCartItems(User user){
-        Cart myCart = cartRepository.findByUser(user.getUsername());
+        Cart myCart = cartRepository.findByBuyer(user.getUsername());
         List<CartItem> cartItems = cartItemRepository.findAllByCart(myCart);
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         cartItems.forEach(s->cartItemDtos.add(CartItemDto.toDto(s)));
@@ -45,7 +45,7 @@ public class CartService {
 
     @Transactional
     public CartItemDto putInCart(Product product, User user){
-        Cart cart = cartRepository.findByUser(user.getUsername());
+        Cart cart = cartRepository.findByBuyer(user.getUsername());
         CartItem cartItem = new CartItem();
         cartItem.setCart(cart);
         cartItem.setId(product.getId());
