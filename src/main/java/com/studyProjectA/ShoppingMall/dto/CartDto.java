@@ -23,7 +23,7 @@ public class CartDto {
     public static CartDto toDto(Cart cart){
         return new CartDto(
                 cart.getId(),
-                cart.getUser()
+                cart.getBuyer()
         );
     }
 }

@@ -24,9 +24,9 @@ public class UserController {
 
     @ApiOperation(value = "유저 찾기", notes = "개별 유저 조회")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/{id}")
-    public Response findUser(@PathVariable("id") int id) {
-        return Response.success(userService.findUser(id));
+    @GetMapping("/users/{username}")
+    public Response findUser(@PathVariable("username") String username) {
+        return Response.success(userService.findUserByUsername(username));
     }
 
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
