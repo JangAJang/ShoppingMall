@@ -5,8 +5,7 @@
 ---
 # 2. Project Info
 - Auth | ( 회원가입 & 로그인 )
-- Review | ( CRUD )
-- 각자 추가 ㄱㄱ
+- Review | ( CRUD + Security)
 ---
 # 3. Team Member
 Mentor : [이재윤](https://github.com/sosow0212)
