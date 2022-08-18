@@ -34,7 +34,7 @@ public class ProductController {
     @ApiOperation(value = "개별 품목보기", notes = "개별 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/products/{itemId}")
-    public Response getProduct(@PathVariable("itemId") Integer itemId) {
+    public Response getProduct(@PathVariable("itemId") Long itemId) {
         return Response.success(productService.getProduct(itemId));
     }
 
