@@ -25,7 +25,7 @@ public class Product {
     @JoinColumn(name = "User_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User userId;
+    private User user;
 
     @Column(nullable = false)
     private int price;
