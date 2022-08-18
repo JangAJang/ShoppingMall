@@ -30,7 +30,7 @@ public class ProductService {
 
     // 단건 물품 조회
     @Transactional(readOnly = true)
-    public ProductResponseDto getProduct(int id){
+    public ProductResponseDto getProduct(long id){
         Product product = productRepository.findById(id).orElseThrow(()->{
             return new IllegalArgumentException("해당 품목을 찾을 수 업습니다.");
         });
@@ -59,7 +59,7 @@ public class ProductService {
 
     // 아이템 수정
     @Transactional
-    public ProductResponseDto updateProduct(int itemId, ProductResponseDto productResponseDto, User loginUser) {
+    public ProductResponseDto updateProduct(long itemId, ProductResponseDto productResponseDto, User loginUser) {
         Product product = productRepository.findById(itemId).orElseThrow(() -> {
             return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
         });
@@ -81,7 +81,7 @@ public class ProductService {
 
     // 아이템 삭제
     @Transactional
-    public void deleteProduct(int itemId, User loginUser) {
+    public void deleteProduct(long itemId, User loginUser) {
 
         Product product = productRepository.findById(itemId).orElseThrow(() -> {
             return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
