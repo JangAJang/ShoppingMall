@@ -1,6 +1,6 @@
 package com.studyProjectA.ShoppingMall.service;
 
-import com.studyProjectA.ShoppingMall.dto.ProductDto;
+import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
@@ -17,31 +17,81 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+
+
+    // 전체 물품 조회
     @Transactional(readOnly = true)
-    public List<ProductDto> getProducts(){
+    public List<ProductResponseDto> getProducts(){
         List<Product> products = productRepository.findAll();
-        List<ProductDto> productDtos = new ArrayList<>();
-        products.forEach(s-> productDtos.add(ProductDto.toDto(s)));
-        return productDtos;
+        List<ProductResponseDto> productResponseDto = new ArrayList<>();
+        products.forEach(s-> productResponseDto.add(ProductResponseDto.toDto(s)));
+        return productResponseDto;
     }
 
+    // 단건 물품 조회
     @Transactional(readOnly = true)
-    public ProductDto getProduct(int id){
+    public ProductResponseDto getProduct(long id){
         Product product = productRepository.findById(id).orElseThrow(()->{
-            return new IllegalArgumentException("해당 품목을 찾을 수 업습니다. ");
+            return new IllegalArgumentException("해당 품목을 찾을 수 업습니다.");
         });
-        return ProductDto.toDto(product);
+        return ProductResponseDto.toDto(product);
+    }
+    /*
+    <<<<<<< HEAD
+        // 아이템 등록.
+    =======
+    >>>>>>> main
+     */
+    // 아이템 등록
+    @Transactional
+    public ProductResponseDto addProduct(ProductResponseDto productResponseDto, User user){
+
+        Product product = new Product();
+        product.setProductName(productResponseDto.getProductName());
+        product.setCategory(productResponseDto.getCategory());
+        product.setDeliveryDate(productResponseDto.getDeliveryDate());
+        product.setPrice(productResponseDto.getPrice());
+        product.setQuantity(productResponseDto.getQuantity());
+        product.setUser(user);
+        productRepository.save(product);
+        return ProductResponseDto.toDto(product);
     }
 
+    // 아이템 수정
     @Transactional
-    public ProductDto addProduct(ProductDto productDto, User user){
-        Product product = new Product();
-        product.setProductName(productDto.getProductName());
-        product.setCategory(productDto.getCategory());
-        product.setDeliveryDate(productDto.getDeliveryDate());
-        product.setPrice(productDto.getPrice());
-        product.setQuantity(productDto.getQuantity());
-        product.setUserId(user);
-        return ProductDto.toDto(product);
+    public ProductResponseDto updateProduct(long itemId, ProductResponseDto productResponseDto, User loginUser) {
+        Product product = productRepository.findById(itemId).orElseThrow(() -> {
+            return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
+        });
+        if(loginUser.equals(product.getUser())) {
+
+            // 토큰 보낸 사람과, 게시글 작성자가 같다면 성공!
+            product.setProductName(productResponseDto.getProductName());
+            product.setPrice(productResponseDto.getPrice());
+            product.setQuantity(productResponseDto.getQuantity());
+            product.setCategory(productResponseDto.getCategory());
+            product.setDeliveryDate(productResponseDto.getDeliveryDate());
+            productRepository.save(product);
+            return ProductResponseDto.toDto(product);
+        } else {
+            // 토큰 보낸 사람과 게시글 작성자가 다르다면 실패!
+            throw new IllegalArgumentException("게시글 작성자가 일치하지 않습니다.");
+        }
     }
+
+    // 아이템 삭제
+    @Transactional
+    public void deleteProduct(long itemId, User loginUser) {
+
+        Product product = productRepository.findById(itemId).orElseThrow(() -> {
+            return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
+        });
+
+        if(loginUser.equals(product.getUser())) {
+            productRepository.deleteById(itemId);
+        } else {
+            throw new IllegalArgumentException("게시글 작성자가 일치하지 않습니다.");
+        }
+    }
+
 }

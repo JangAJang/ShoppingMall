@@ -5,7 +5,7 @@
 ---
 # 2. Project Info
 - Auth | ( 회원가입 & 로그인 )
-- Review | ( CRUD + Security)
+
 ---
 # 3. Team Member
 Mentor : [이재윤](https://github.com/sosow0212)
@@ -13,12 +13,12 @@ Mentor : [이재윤](https://github.com/sosow0212)
 **team member in charge** | **Role**
 
 - [김승범](https://github.com/daily1313) | Review
-- [오정환](https://github.com/poll9999) | 맡은 역할 써
-- [김태수](https://github.com/kimtaesoo99) | 맡은 역할 써
+- [오정환](https://github.com/poll9999) | Product
+- [김태수](https://github.com/kimtaesoo99) | Product
 - [박상혁](https://github.com/baksakcci) | Review
 - [이재호](https://github.com/jjaeho) | Review
 - [이장희](https://github.com/JangAJang) | JWT+User+Cart
-- [엄태인](https://github.com/eom-tae-in) | 맡은 역할 써
+- [엄태인](https://github.com/eom-tae-in) | Product
 ---
 # 4. Skill
 - JWT + Security (Json Web Token)

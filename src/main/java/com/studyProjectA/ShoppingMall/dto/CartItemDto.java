@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class CartItemDto {
 
     @NotNull
-    private int id;
+    private long id;
 
     @NotNull
     private Cart cart;

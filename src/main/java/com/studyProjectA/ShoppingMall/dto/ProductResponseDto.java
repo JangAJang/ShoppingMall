@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
+public class ProductResponseDto {
 
     @NotNull(message = "제품명을 입력해주세요")
     private String productName;
 
     @NotNull
-    private User userId;
+    private String userName;
 
     @NotNull(message = "가격을 입력해주세요")
     private int price;
@@ -30,14 +30,17 @@ public class ProductDto {
 
     private long deliveryDate;
 
-    public static ProductDto toDto(Product product){
-        return new ProductDto(
+    public static ProductResponseDto toDto(Product product){
+        return new ProductResponseDto(
                 product.getProductName(),
-                product.getUser(),
+                product.getUser().getUsername(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getCategory(),
                 product.getDeliveryDate()
         );
+
     }
+
+
 }
