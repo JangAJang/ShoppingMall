@@ -1,6 +1,7 @@
 package com.studyProjectA.ShoppingMall.dto;
 
 import com.studyProjectA.ShoppingMall.entity.Product;
+import com.studyProjectA.ShoppingMall.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductResponseDto {
-    @NotNull
-    private int id;
 
     @NotNull(message = "제품명을 입력해주세요")
     private String productName;
@@ -33,7 +32,6 @@ public class ProductResponseDto {
 
     public static ProductResponseDto toDto(Product product){
         return new ProductResponseDto(
-                product.getId(),
                 product.getProductName(),
                 product.getUser().getUsername(),
                 product.getPrice(),
