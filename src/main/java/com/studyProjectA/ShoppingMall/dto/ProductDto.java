@@ -12,8 +12,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
-    @NotNull
-    private int id;
 
     @NotNull(message = "제품명을 입력해주세요")
     private String productName;
@@ -34,9 +32,8 @@ public class ProductDto {
 
     public static ProductDto toDto(Product product){
         return new ProductDto(
-                product.getId(),
                 product.getProductName(),
-                product.getUserId(),
+                product.getUser(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getCategory(),
