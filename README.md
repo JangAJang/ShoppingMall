@@ -5,7 +5,6 @@
 ---
 # 2. Project Info
 - Auth | ( 회원가입 & 로그인 )
-- Review | ( CRUD )
 
 ---
 # 3. Team Member
