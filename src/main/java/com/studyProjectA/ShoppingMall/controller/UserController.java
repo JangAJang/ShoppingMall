@@ -1,19 +1,26 @@
 package com.studyProjectA.ShoppingMall.controller;
 
+import com.studyProjectA.ShoppingMall.auth.PrincipalDetails;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
+import com.studyProjectA.ShoppingMall.dto.UserDto;
+import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFound;
+import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.service.UserService;
 import com.studyProjectA.ShoppingMall.response.Response;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @ApiOperation(value = "전체 회원 보기 ", notes = "전체 회원을 조회한다. ")
     @ResponseStatus(HttpStatus.OK)
@@ -22,11 +29,18 @@ public class UserController {
         return Response.success(userService.findAll());
     }
 
-    @ApiOperation(value = "유저 찾기", notes = "개별 유저 조회")
+    @ApiOperation(value = "마이페이지" ,notes = "마이 페이지를 조회합니다. ")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/users/{username}")
-    public Response findUser(@PathVariable("username") String username) {
-        return Response.success(userService.findUserByUsername(username));
+    public Response myPage(@PathVariable("username")String username){
+        if(getUser().getUsername().equals(username)){
+            System.out.println("로그인 확인 완료");
+            System.out.println(getUser());
+            return Response.success(UserDto.toDto(getUser()));
+        }
+        else{
+            return Response.failure(404, "사용자가 일치하지 않습니다. ");
+        }
     }
 
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
@@ -55,6 +69,12 @@ public class UserController {
     @GetMapping("/users/my-products")
     public Response showMyProducts(){
         return Response.success();
+    }
+
+    User getUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFound::new);
+        return loginUser;
     }
 
 
