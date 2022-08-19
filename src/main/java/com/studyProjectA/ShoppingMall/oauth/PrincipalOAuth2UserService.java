@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +52,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         String password = bCryptPasswordEncoder.encode("겟인데어");
         String role = "USER";
         String address = "주소 변경 필요";
-        User userEntity = userRepository.findByUsername(username);
+        User userEntity = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
         if(userEntity == null){ //아이디 없음. 회원가입 진행
             userEntity = User.builder()
                     .username(username)

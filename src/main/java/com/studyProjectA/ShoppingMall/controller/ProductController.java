@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 
@@ -38,15 +40,15 @@ public class ProductController {
         return Response.success(productService.getProduct(itemId));
     }
 
+
     // 물품 등록
     @ApiOperation(value = "아이템 등록", notes = "아이템을 등록한다.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/products/load")
     public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName());
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
 
-        //예외처리 해야하나?(토큰이 없을 때)
         return Response.success(productService.addProduct(productResponseDto, loginUser));
     }
 
@@ -57,7 +59,7 @@ public class ProductController {
     public Response updateProduct(@PathVariable("itemId") Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName());
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
 
         return Response.success(productService.updateProduct(itemId, productResponseDto, loginUser));
 
@@ -67,13 +69,12 @@ public class ProductController {
     @ApiOperation(value = "물품 삭제", notes = "물품을 삭제한다.")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/products/delete/{itemId}")
-    public Response deleteProduct(@PathVariable("itemId") Integer itemId) {
+    public Response deleteProduct(@PathVariable("itemId") Long itemId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName());
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
 
         productService.deleteProduct(itemId, loginUser);
 
         return Response.success("삭제 완료");
     }
-}

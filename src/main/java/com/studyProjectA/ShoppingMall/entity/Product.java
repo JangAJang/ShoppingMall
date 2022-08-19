@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @AllArgsConstructor
@@ -17,15 +18,15 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String productName;
 
-    @JoinColumn(name = "User_id")
+    @JoinColumn(name = "seller_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    private User seller;
 
     @Column(nullable = false)
     private int price;

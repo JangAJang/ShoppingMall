@@ -25,7 +25,7 @@ public class CartItem {
     @Id
     @JoinColumn(name = "Product_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private long id;
+    private Long id;
 
     @JoinColumn(name = "Cart_id")
     @ManyToOne(fetch = FetchType.LAZY)

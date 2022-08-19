@@ -59,7 +59,7 @@ public class UserController {
 
     User getUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFound::new);
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         return loginUser;
     }
 
