@@ -22,25 +22,11 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    @ApiOperation(value = "전체 회원 보기 ", notes = "전체 회원을 조회한다. ")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users")
-    public Response findAll() {
-        return Response.success(userService.findAll());
-    }
-
     @ApiOperation(value = "마이페이지" ,notes = "마이 페이지를 조회합니다. ")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/{username}")
-    public Response myPage(@PathVariable("username")String username){
-        if(getUser().getUsername().equals(username)){
-            System.out.println("로그인 확인 완료");
-            System.out.println(getUser());
-            return Response.success(UserDto.toDto(getUser()));
-        }
-        else{
-            return Response.failure(404, "사용자가 일치하지 않습니다. ");
-        }
+    @GetMapping("/users/myPage")
+    public Response myPage(){
+        return Response.success(userService.findUser(getUser().getId()));
     }
 
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
