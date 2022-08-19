@@ -57,7 +57,7 @@ public class ReviewResponseDto {
         return new ReviewResponseDto(
                 review.getUserId().getUsername(),
                 review.getRate(),
-                review.getProductId().getUser().getUsername(),
+                review.getProductId().getSeller().getUsername(),
                 review.getCreateDate(),
                 review.getProductId().getProductName(),
                 review.getComment()
