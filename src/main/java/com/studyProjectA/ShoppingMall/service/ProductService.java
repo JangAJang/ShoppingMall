@@ -1,5 +1,7 @@
 package com.studyProjectA.ShoppingMall.service;
 
+import com.studyProjectA.ShoppingMall.advice.ProductNotFoundException;
+import com.studyProjectA.ShoppingMall.advice.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.User;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +34,11 @@ public class ProductService {
     // 단건 물품 조회
     @Transactional(readOnly = true)
     public ProductResponseDto getProduct(long id){
-        Product product = productRepository.findById(id).orElseThrow(()->{
-            return new IllegalArgumentException("해당 품목을 찾을 수 업습니다.");
-        });
+        Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+
         return ProductResponseDto.toDto(product);
     }
-    /*
-    <<<<<<< HEAD
-        // 아이템 등록.
-    =======
-    >>>>>>> main
-     */
+
     // 아이템 등록
     @Transactional
     public ProductResponseDto addProduct(ProductResponseDto productResponseDto, User user){
@@ -52,7 +49,8 @@ public class ProductService {
         product.setDeliveryDate(productResponseDto.getDeliveryDate());
         product.setPrice(productResponseDto.getPrice());
         product.setQuantity(productResponseDto.getQuantity());
-        product.setUser(user);
+        product.setSeller(user);
+        System.out.println(product);
         productRepository.save(product);
         return ProductResponseDto.toDto(product);
     }
@@ -60,10 +58,10 @@ public class ProductService {
     // 아이템 수정
     @Transactional
     public ProductResponseDto updateProduct(long itemId, ProductResponseDto productResponseDto, User loginUser) {
-        Product product = productRepository.findById(itemId).orElseThrow(() -> {
-            return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
-        });
-        if(loginUser.equals(product.getUser())) {
+
+        Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
+
+        if(loginUser.equals(product.getSeller())) {
 
             // 토큰 보낸 사람과, 게시글 작성자가 같다면 성공!
             product.setProductName(productResponseDto.getProductName());
@@ -75,23 +73,21 @@ public class ProductService {
             return ProductResponseDto.toDto(product);
         } else {
             // 토큰 보낸 사람과 게시글 작성자가 다르다면 실패!
-            throw new IllegalArgumentException("게시글 작성자가 일치하지 않습니다.");
+            throw new UserNotEqualsException();
         }
     }
+
 
     // 아이템 삭제
+    // 아이템 삭제
     @Transactional
-    public void deleteProduct(long itemId, User loginUser) {
+    public void deleteProduct(Long itemId, User loginUser) {
+        Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
 
-        Product product = productRepository.findById(itemId).orElseThrow(() -> {
-            return new IllegalArgumentException("해당 품목을 찾을 수 없습니다.");
-        });
-
-        if(loginUser.equals(product.getUser())) {
+        if(loginUser.equals(product.getSeller())) {
             productRepository.deleteById(itemId);
         } else {
-            throw new IllegalArgumentException("게시글 작성자가 일치하지 않습니다.");
+            throw new UserNotEqualsException();
         }
     }
-
 }
