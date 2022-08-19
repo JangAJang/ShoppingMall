@@ -33,7 +33,7 @@ public class ProductDto {
     public static ProductDto toDto(Product product){
         return new ProductDto(
                 product.getProductName(),
-                product.getUser(),
+                product.getSeller(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getCategory(),
