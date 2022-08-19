@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 public class CartItemDto {
 
     @NotNull
-    private long id;
+    private Long id;
 
     @NotNull
     private Cart cart;
-    
+
     public static CartItemDto toDto(CartItem cartItem){
         return new CartItemDto(
                 cartItem.getId(), cartItem.getCart()
