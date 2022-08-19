@@ -1,4 +1,4 @@
-package com.studyProjectA.ShoppingMall.advice;
+package com.studyProjectA.ShoppingMall.excpetion;
 
 public class UserNotEqualsException extends RuntimeException{
 }
