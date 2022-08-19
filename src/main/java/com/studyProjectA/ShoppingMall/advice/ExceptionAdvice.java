@@ -15,10 +15,39 @@ public class ExceptionAdvice {
         return Response.failure(500, e.getMessage().toString());
     }
 
-
+    //
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response methodArgumentNotValidException(MethodArgumentNotValidException e) { // 2
+    public Response methodArgumentNotValidException(MethodArgumentNotValidException e) {
         return Response.failure(400, e.getBindingResult().getFieldError().getDefaultMessage());
+    }
+
+    //404 응답
+    //요청한 유저 정보를 찾을 수 없음
+    @ExceptionHandler(MemberNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response memberNotFoundException() {
+        return Response.failure(404, "요청한 화면을 찾을 수 없습니다.");
+    }
+
+    // memberNotFoundException()랑 userNotFoundException(e)랑 겹치는 내용인거 같은데 ??(수정필요하면 코드리뷰 부탁드립니당)
+    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response userNotFoundException(ChangeSetPersister.NotFoundException e) {
+        return Response.failure(404, "유저를 찾을 수 없습니다 ");
+    }
+
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response productNotFoundException() {
+        return Response.failure(404, "물품을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(UserNotEqualsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response userNotEqualsException() {
+        return Response.failure(401, "권한이 없습니다.");
+
     }
 }
