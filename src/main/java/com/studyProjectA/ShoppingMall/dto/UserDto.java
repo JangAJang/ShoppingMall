@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class UserDto {
 
     @NotNull
-    private int id;
+    private Long id;
 
     @NotNull(message = "아이디를 입력해주세요")
     private String username;
