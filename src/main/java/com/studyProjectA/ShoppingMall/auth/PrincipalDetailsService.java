@@ -2,7 +2,9 @@ package com.studyProjectA.ShoppingMall.auth;
 
 
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFound;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
+import com.studyProjectA.ShoppingMall.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +19,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow(UserNotFound::new);
         return new PrincipalDetails(user);
     }
 }
