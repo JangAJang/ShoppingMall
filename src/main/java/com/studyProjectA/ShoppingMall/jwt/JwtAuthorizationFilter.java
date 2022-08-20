@@ -3,6 +3,7 @@ package com.studyProjectA.ShoppingMall.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.auth.PrincipalDetails;
 import org.springframework.security.authentication.AuthenticationManager;
