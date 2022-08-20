@@ -2,6 +2,7 @@ package com.studyProjectA.ShoppingMall.controller;
 
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
 import com.studyProjectA.ShoppingMall.service.ProductService;
@@ -12,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,7 +28,6 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/products")
     public Response getProducts() {
-
         return Response.success(productService.getProducts());
     }
 
@@ -39,7 +38,25 @@ public class ProductController {
     public Response getProduct(@PathVariable("itemId") Long itemId) {
         return Response.success(productService.getProduct(itemId));
     }
+    // 품목이름 검색하기
+    @ApiOperation(value = "품목 검색하기",notes = "검색한 품목을 조회한다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/products/search/{searchProductName}")
+    public Response gerSearchProducts(@PathVariable("searchProductName") String searchProductName){
+        return Response.success(productService.getSearchProducts(searchProductName));
+    }
 
+    //사용자검색으로 아이템 목록보기
+    //예를 들어 /product/search/{searchProductName}이거랑
+    ///products/search/{userName} 이거랑 둘다 String으로 받아서 서버에서둘중
+    //어디로 갈지 모름 그래서 경로를 다르게함 String 뿐만아니라 Long도 같음음
+
+    @ApiOperation(value = "검색한 유저가 등록한 품목 검색하기",notes = "검색한 유저의 품목을 조회한다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/products/searchUser/{userName}")
+    public Response gerUserProducts(@PathVariable("userName") String userName){
+        return Response.success(productService.getUserProducts(userName));
+    }
 
     // 물품 등록
     @ApiOperation(value = "아이템 등록", notes = "아이템을 등록한다.")
@@ -47,7 +64,7 @@ public class ProductController {
     @PostMapping("/products/load")
     public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
 
         return Response.success(productService.addProduct(productResponseDto, loginUser));
     }
@@ -57,10 +74,8 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/products/update/{itemId}")
     public Response updateProduct(@PathVariable("itemId") Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         return Response.success(productService.updateProduct(itemId, productResponseDto, loginUser));
 
     }
@@ -72,9 +87,8 @@ public class ProductController {
     public Response deleteProduct(@PathVariable("itemId") Long itemId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         productService.deleteProduct(itemId, loginUser);
-
         return Response.success("삭제 완료");
     }
+}
