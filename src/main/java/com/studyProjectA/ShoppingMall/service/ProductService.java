@@ -1,10 +1,10 @@
 package com.studyProjectA.ShoppingMall.service;
 
-import com.studyProjectA.ShoppingMall.advice.ProductNotFoundException;
-import com.studyProjectA.ShoppingMall.advice.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,15 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
-
-
 
     // 전체 물품 조회
     @Transactional(readOnly = true)
@@ -37,6 +34,24 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
 
         return ProductResponseDto.toDto(product);
+    }
+
+    //품목 검색
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getSearchProducts(String searchProductName){
+        List<Product> products = productRepository.findAllByProductNameContaining(searchProductName);
+        List<ProductResponseDto> productResponseDtos = new ArrayList<>();
+        products.forEach(s->productResponseDtos.add(ProductResponseDto.toDto(s)));
+        return productResponseDtos;
+    }
+
+    //검색한 사용자 품목 조회
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getUserProducts(String userName){
+        List<Product> products = productRepository.findAllBySeller_Username(userName);
+        List<ProductResponseDto> productResponseDtos = new ArrayList<>();
+        products.forEach(s->productResponseDtos.add(ProductResponseDto.toDto(s)));
+        return productResponseDtos;
     }
 
     // 아이템 등록
@@ -74,11 +89,10 @@ public class ProductService {
         } else {
             // 토큰 보낸 사람과 게시글 작성자가 다르다면 실패!
             throw new UserNotEqualsException();
+
         }
     }
 
-
-    // 아이템 삭제
     // 아이템 삭제
     @Transactional
     public void deleteProduct(Long itemId, User loginUser) {
