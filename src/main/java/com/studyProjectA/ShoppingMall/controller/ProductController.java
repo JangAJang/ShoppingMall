@@ -13,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @RestController
 
@@ -39,6 +37,23 @@ public class ProductController {
     @GetMapping("/products/{itemId}")
     public Response getProduct(@PathVariable("itemId") Long itemId) {
         return Response.success(productService.getProduct(itemId));
+    }
+
+    // 품목이름 검색하기
+    @ApiOperation(value = "품목 검색하기",notes = "검색한 품목을 조회한다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/products/search/{searchProductName}")
+    public Response getSearchProducts(@PathVariable("searchProductName") String searchProductName){
+        return Response.success(productService.getSearchProducts(searchProductName));
+    }
+
+
+    //사용자검색으로 아이템 목록보기
+    @ApiOperation(value = "검색한 유저가 등록한 품목 검색하기",notes = "검색한 유저의 품목을 조회한다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/products/searchUser/{userName}")
+    public Response getUserProducts(@PathVariable("userName") String userName){
+        return Response.success(productService.getUserProducts(userName));
     }
 
 
