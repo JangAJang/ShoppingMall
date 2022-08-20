@@ -47,8 +47,10 @@ public class User {
         return new ArrayList<>();
     }
 
+
     @Builder
     public User(String username, String password, String email, String role, String provider, String providerId, String address) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -57,5 +59,4 @@ public class User {
         this.providerId = providerId;
         this.address = address;
     }
-
 }

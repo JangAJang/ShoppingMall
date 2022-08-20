@@ -17,18 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     //
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserDto register(RegisterDto registerDto){
-        User user = new User();
-        user.builder().username(registerDto.getUsername())
+        User user = User.builder()
+                .username(registerDto.getUsername())
                 .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
                 .email(registerDto.getEmail())
                 .address(registerDto.getAddress())
-                .role("ROLE_USER").build();
-        System.out.println(user.getUsername());
+                .role("USER_ROLE").build();
         userRepository.save(user);
         return UserDto.toDto(user);
     }

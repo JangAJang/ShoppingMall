@@ -2,6 +2,7 @@ package com.studyProjectA.ShoppingMall.oauth;
 
 import com.studyProjectA.ShoppingMall.auth.PrincipalDetails;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.oauth.provider.*;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
