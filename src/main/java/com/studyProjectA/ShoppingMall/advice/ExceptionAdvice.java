@@ -1,6 +1,10 @@
 package com.studyProjectA.ShoppingMall.advice;
 
+import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.response.Response;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +28,7 @@ public class ExceptionAdvice {
 
     //404 응답
     //요청한 유저 정보를 찾을 수 없음
-    @ExceptionHandler(MemberNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response memberNotFoundException() {
         return Response.failure(404, "요청한 화면을 찾을 수 없습니다.");

@@ -32,7 +32,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartDto clearMyCart(int cartId, User user){
+    public CartDto clearMyCart(Long cartId, User user){
         Cart cart = cartRepository.findById(cartId).orElseThrow(()->{
             return new IllegalArgumentException("장바구니를 찾을 수 없습니다. ");
         });
@@ -54,7 +54,7 @@ public class CartService {
     }
 
     @Transactional
-    public String takeOutFromCart(int cartItem){
+    public String takeOutFromCart(Long cartItem){
         cartItemRepository.findById(cartItem).orElseThrow(()->{
             return new IllegalArgumentException("장바구니에서 상품을 찾을 수 없습니다. ");
         });

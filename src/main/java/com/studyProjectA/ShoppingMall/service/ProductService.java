@@ -1,10 +1,10 @@
 package com.studyProjectA.ShoppingMall.service;
 
-import com.studyProjectA.ShoppingMall.advice.ProductNotFoundException;
-import com.studyProjectA.ShoppingMall.advice.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -83,7 +83,6 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long itemId, User loginUser) {
         Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
-
         if(loginUser.equals(product.getSeller())) {
             productRepository.deleteById(itemId);
         } else {

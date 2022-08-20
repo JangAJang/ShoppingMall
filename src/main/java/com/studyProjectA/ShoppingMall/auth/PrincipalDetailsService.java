@@ -2,7 +2,7 @@ package com.studyProjectA.ShoppingMall.auth;
 
 
 import com.studyProjectA.ShoppingMall.entity.User;
-import com.studyProjectA.ShoppingMall.excpetion.UserNotFound;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
 import lombok.RequiredArgsConstructor;

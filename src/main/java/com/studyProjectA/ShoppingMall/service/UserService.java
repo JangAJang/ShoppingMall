@@ -3,6 +3,7 @@ package com.studyProjectA.ShoppingMall.service;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
 import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,11 +23,11 @@ public class UserService {
 
     public UserDto register(RegisterDto registerDto){
         User user = new User();
-        user.setUsername(registerDto.getUsername());
-        user.setPassword(bCryptPasswordEncoder.encode(registerDto.getPassword()));
-        user.setEmail(registerDto.getEmail());
-        user.setAddress(registerDto.getAddress());
-        user.setRole("ROLE_USER");
+        user.builder().username(registerDto.getUsername())
+                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
+                .email(registerDto.getEmail())
+                .address(registerDto.getAddress())
+                .role("ROLE_USER").build();
         System.out.println(user.getUsername());
         userRepository.save(user);
         return UserDto.toDto(user);

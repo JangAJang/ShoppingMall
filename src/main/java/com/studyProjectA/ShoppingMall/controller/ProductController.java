@@ -2,6 +2,7 @@ package com.studyProjectA.ShoppingMall.controller;
 
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
 import com.studyProjectA.ShoppingMall.service.ProductService;
@@ -47,7 +48,7 @@ public class ProductController {
     @PostMapping("/products/load")
     public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
 
         return Response.success(productService.addProduct(productResponseDto, loginUser));
     }
@@ -59,8 +60,7 @@ public class ProductController {
     public Response updateProduct(@PathVariable("itemId") Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         return Response.success(productService.updateProduct(itemId, productResponseDto, loginUser));
 
     }
@@ -72,9 +72,10 @@ public class ProductController {
     public Response deleteProduct(@PathVariable("itemId") Long itemId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
 
         productService.deleteProduct(itemId, loginUser);
 
         return Response.success("삭제 완료");
     }
+}
