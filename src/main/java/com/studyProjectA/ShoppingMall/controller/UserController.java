@@ -1,10 +1,8 @@
 package com.studyProjectA.ShoppingMall.controller;
 
-import com.studyProjectA.ShoppingMall.auth.PrincipalDetails;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
-import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
-import com.studyProjectA.ShoppingMall.excpetion.UserNotFound;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.service.UserService;
 import com.studyProjectA.ShoppingMall.response.Response;
