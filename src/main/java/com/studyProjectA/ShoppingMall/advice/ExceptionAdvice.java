@@ -1,6 +1,10 @@
 package com.studyProjectA.ShoppingMall.advice;
 
+import com.studyProjectA.ShoppingMall.excpetion.MemberNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
 import com.studyProjectA.ShoppingMall.response.Response;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,7 +40,6 @@ public class ExceptionAdvice {
     public Response userNotFoundException(ChangeSetPersister.NotFoundException e) {
         return Response.failure(404, "유저를 찾을 수 없습니다 ");
     }
-
 
     @ExceptionHandler(ProductNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
