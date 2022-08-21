@@ -2,6 +2,7 @@ package com.studyProjectA.ShoppingMall.entity;
 
 import com.studyProjectA.ShoppingMall.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Product {
 
     @Id
@@ -23,10 +25,10 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String productName;
 
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "User_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User seller;
+    private User user;
 
     @Column(nullable = false)
     private Integer price;

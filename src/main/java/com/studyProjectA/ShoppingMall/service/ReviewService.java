@@ -66,7 +66,7 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAll();
         List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
         for(Review review : reviews){
-            if(review.getProduct().getSeller().getUsername().equals(product.getSeller().getUsername()) && review.getUser().getUsername().equals(user.getUsername())){
+            if(review.getProduct().getUser().getUsername().equals(product.getUser().getUsername()) && review.getUser().getUsername().equals(user.getUsername())){
                 reviewResponseDtos.add(ReviewResponseDto.toDto(review));
             }
         }
