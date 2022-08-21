@@ -32,9 +32,7 @@ public class UserService {
                 .role("ROLE_USER").build();
         userRepository.save(user);
         Cart cart = Cart.builder()
-                .buyer(user)
-                .quantity(0)
-                .price(0).build();
+                .buyer(user).build();
         cartRepository.save(cart);
         return UserDto.toDto(user);
     }

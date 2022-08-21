@@ -33,24 +33,6 @@ public class UserController {
         return Response.success(userService.findUser(getUser().getId()));
     }
 
-    @ApiOperation(value = "장바구니 품목 보기", notes = "전체 장바구니 품목을 조회한다.")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/myPage/myCart")
-    public Response showMyCart(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.getMyCart(user));
-    }
-
-    @ApiOperation(value = "나의 판매상품보기", notes = "내가 등록한 판매상품을 확인합니다. ")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/myPage/myProduct")
-    public Response showMyProduct(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(productService.getUserProducts(user.getUsername()));
-    }
-
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/join")
