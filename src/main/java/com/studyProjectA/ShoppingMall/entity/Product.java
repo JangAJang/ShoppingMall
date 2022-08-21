@@ -29,14 +29,14 @@ public class Product {
     private User seller;
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
 
     @Column
-    private int quantity;
+    private Integer quantity;
 
     @Column
     private String category;
 
     @Column
-    private long deliveryDate;
+    private Long deliveryDate;
 }

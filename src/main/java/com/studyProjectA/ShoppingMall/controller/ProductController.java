@@ -5,6 +5,7 @@ import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
+import com.studyProjectA.ShoppingMall.service.CartService;
 import com.studyProjectA.ShoppingMall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import static com.studyProjectA.ShoppingMall.response.Response.success;
 
 
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserRepository userRepository;
+    private final CartService cartService;
 
     // 전체 품목 조회
     @ApiOperation(value = "전체 물품 보기", notes = "전체 품목을 조회한다.")
@@ -86,10 +90,18 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/products/delete/{itemId}")
     public Response deleteProduct(@PathVariable("itemId") Long itemId) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         productService.deleteProduct(itemId, loginUser);
         return Response.success("삭제 완료");
+    }
+
+    @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/products/{productId}/take/{quantity}")
+    public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return success(cartService.includeProductToCart(loginUser, Long.parseLong(productId), Integer.parseInt(quantity)));
     }
 }

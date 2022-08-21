@@ -1,13 +1,20 @@
 package com.studyProjectA.ShoppingMall.controller;
 
 import com.studyProjectA.ShoppingMall.dto.ReviewRequestDto;
-import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.Review;
+import com.studyProjectA.ShoppingMall.entity.User;
+import com.studyProjectA.ShoppingMall.excpetion.ReviewNotFoundException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
+import com.studyProjectA.ShoppingMall.repository.ReviewRepository;
+import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
 import com.studyProjectA.ShoppingMall.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,37 +33,78 @@ Controller의 역할
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/products")
 public class ReviewController {
 
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
-    @ApiOperation(value = "전체 리뷰 게시글 보기", notes = "전체 리뷰 게시글을 조회합니다.")
+    private final UserRepository userRepository;
+
+    private final ReviewRepository reviewRepository;
+
+
+    @ApiOperation(value = "전체 리뷰 게시글 보기", notes = "제품의 전체 리뷰를 조회합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/reviews")
-    public Response findAll() {
-        return success(reviewService.getReviews());
+    @GetMapping("/{productId}/reviews/")
+    public Response findAll(@PathVariable("productId") Long productId) {
+        return success(reviewService.getProductReviews(productId));
     }
+
+    @ApiOperation(value = "리뷰 작성자로 검색",notes = "해당 유저의 제품 리뷰를 검색힙니다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{productId}/reviews/byUser/{username}")
+    public Response findReviewByUsername(@PathVariable("productId") Long productId, @PathVariable("username") String username){
+        return success(reviewService.getProductReviewsByUsername(productId, username));
+    }
+
+    @ApiOperation(value = "리뷰 내용으로 검색", notes = "리뷰에 등록된 내용을 검색합니다. ")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{productId}/reviews/byComment/{comment}")
+    public Response findReviewByComment(@PathVariable("productId")Long productId, @PathVariable("comment")String comment){
+        return success(reviewService.getProductReviewsByComment(productId, comment));
+    }
+
 
     @ApiOperation(value = "리뷰 게시글 작성", notes = "리뷰 게시글을 작성합니다.")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/reviews/write")
-    public Response saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @RequestBody UserDto userdto) {
-        return success(reviewService.saveReview(reviewRequestDto, userdto));
+    @PostMapping("/{productId}/reviews/write")
+    public Response saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @PathVariable("productId") Long productId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User writer = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return success(reviewService.saveReview(reviewRequestDto, writer, productId));
     }
 
     @ApiOperation(value = "리뷰 게시글 수정", notes = "리뷰 게시글을 수정합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/reviews/{id}")
-    public Response updateReview(@PathVariable("id") Integer id, Review review) {
-        return success(reviewService.updateReview(id, review));
+    @PutMapping("/{productId}/reviews/{reviewId}/update")
+    public Response updateReview( @PathVariable("productId") String productId, @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequestDto reviewRequestDto) {
+        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        User writer = oldReview.getUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        if(loginUser.equals(writer)){
+            return success(reviewService.updateReview(reviewId, reviewRequestDto));
+        }
+        else{
+            throw new UserNotEqualsException();
+        }
     }
 
     @ApiOperation(value = "리뷰 게시글 삭제", notes = "리뷰 게시글을 삭제합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/review/{id}")
-    public Response deleteReview(@PathVariable("id") Integer id) {
-        reviewService.deleteReview(id);
-        return success("성공적으로 지웠습니다.");
+    @DeleteMapping("/{id}/reviews/{reviewId}/delete")
+    public Response deleteReview(@PathVariable("reviewId") Long reviewId, @PathVariable("id") String id) {
+        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        User writer = oldReview.getUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        if(loginUser.equals(writer)){
+            reviewService.deleteReview(reviewId);
+            return success("삭제 완료");
+        }
+        else{
+            throw new UserNotEqualsException();
+        }
     }
 
 }

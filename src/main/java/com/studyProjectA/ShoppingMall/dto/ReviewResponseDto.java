@@ -28,7 +28,7 @@ public class ReviewResponseDto {
     private String buyerName;
 
     @NotNull
-    private int rate;
+    private Integer rate;
 
     @NotBlank
     private String sellerName;
@@ -36,14 +36,14 @@ public class ReviewResponseDto {
     @NotBlank
     private LocalDate date;
 
-    @NotBlank
+    @NotBlank(message = "제품명을 입력해주세요.")
     private String productName;
 
-    @NotBlank
+    @NotBlank(message = "리뷰를 입력해주세요.")
     private String comment;
 
     // Constructor
-    public ReviewResponseDto(String buyerName, int rate, String sellerName, LocalDate date, String productName, String comment) {
+    public ReviewResponseDto(String buyerName, Integer rate, String sellerName, LocalDate date, String productName, String comment) {
         this.buyerName = buyerName;
         this.rate = rate;
         this.sellerName = sellerName;
@@ -55,11 +55,11 @@ public class ReviewResponseDto {
     // toDto
     public static ReviewResponseDto toDto(Review review) {
         return new ReviewResponseDto(
-                review.getUserId().getUsername(),
+                review.getUser().getUsername(),
                 review.getRate(),
-                review.getProductId().getSeller().getUsername(),
+                review.getProduct().getSeller().getUsername(),
                 review.getCreateDate(),
-                review.getProductId().getProductName(),
+                review.getProduct().getProductName(),
                 review.getComment()
         );
     }
