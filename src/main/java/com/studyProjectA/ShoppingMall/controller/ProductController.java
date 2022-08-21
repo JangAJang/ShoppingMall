@@ -96,12 +96,12 @@ public class ProductController {
         return Response.success("삭제 완료");
     }
 
-    @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/products/{productId}/take/{quantity}")
-    public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
+    @ApiOperation(value = "나의 판매상품보기", notes = "내가 등록한 판매상품을 확인합니다. ")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/users/myPage/myProduct")
+    public Response showMyProduct(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.includeProductToCart(loginUser, Long.parseLong(productId), Integer.parseInt(quantity)));
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return success(productService.getUserProducts(user.getUsername()));
     }
 }
