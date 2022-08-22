@@ -1,10 +1,13 @@
 package com.studyProjectA.ShoppingMall.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -21,19 +24,20 @@ public class Review {
     // 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     // 상품 매핑
     @JoinColumn(name = "Product_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Product productId;
+    @JsonIgnore
+    private Product product;
 
     // 평점
     @Column(nullable = false)
     @Max(100)
     @Min(0)
-    private int rate;
+    private Integer rate;
 
     // 리뷰 코멘트
     @Column(nullable = false)
@@ -41,6 +45,7 @@ public class Review {
 
     // 리뷰생성날짜
     @Column(nullable = false)
+    @CreatedDate
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate createDate;
 
@@ -53,6 +58,16 @@ public class Review {
     @JoinColumn(name = "User_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User userId;
+    @JsonIgnore
+    private User user;
 
+    @Builder
+    public Review(Product product, Integer rate, LocalDate createDate, String comment,User user)
+    {
+        this.product = product;
+        this.rate = rate;
+        this.createDate = createDate;
+        this.comment = comment;
+        this.user = user;
+    }
 }

@@ -1,11 +1,10 @@
 package com.studyProjectA.ShoppingMall.controller;
-
-import com.studyProjectA.ShoppingMall.auth.PrincipalDetails;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
-import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
+import com.studyProjectA.ShoppingMall.service.CartService;
+import com.studyProjectA.ShoppingMall.service.ProductService;
 import com.studyProjectA.ShoppingMall.service.UserService;
 import com.studyProjectA.ShoppingMall.response.Response;
 import io.swagger.annotations.ApiOperation;
@@ -15,12 +14,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import static com.studyProjectA.ShoppingMall.response.Response.success;
+
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @RestController
 public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final CartService cartService;
+    private final ProductService productService;
 
     @ApiOperation(value = "마이페이지" ,notes = "마이 페이지를 조회합니다. ")
     @ResponseStatus(HttpStatus.OK)
