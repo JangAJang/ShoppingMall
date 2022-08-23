@@ -33,6 +33,12 @@ public class ExceptionAdvice {
         return Response.failure(404, "유저를 찾을 수 없습니다 ");
     }
 
+    @ExceptionHandler(ReviewNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response reviewNotFoundException(){
+        return Response.failure(404, "리뷰를 찾을 수 없습니다.");
+    }
+
 
     @ExceptionHandler(ProductNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
