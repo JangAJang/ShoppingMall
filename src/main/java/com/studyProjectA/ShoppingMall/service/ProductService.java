@@ -53,24 +53,24 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getUserProducts(String userName){
         User user = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
-        List<Product> products = productRepository.findAllBySeller_Username(userName);
+        List<Product> products = productRepository.findAllByUser(user);
         if (products.isEmpty())throw new ProductNotFoundException();
         List<ProductResponseDto> productResponseDtos = new ArrayList<>();
         products.forEach(s->productResponseDtos.add(ProductResponseDto.toDto(s)));
+        if(productResponseDtos.isEmpty()) throw new ProductNotFoundException();
         return productResponseDtos;
     }
 
     // 아이템 등록
     @Transactional
     public ProductResponseDto addProduct(ProductResponseDto productResponseDto, User user){
-
-        Product product = new Product();
-        product.setProductName(productResponseDto.getProductName());
-        product.setCategory(productResponseDto.getCategory());
-        product.setDeliveryDate(productResponseDto.getDeliveryDate());
-        product.setPrice(productResponseDto.getPrice());
-        product.setQuantity(productResponseDto.getQuantity());
-        product.setSeller(user);
+        Product product = Product.builder()
+                .productName(productResponseDto.getProductName())
+                .category(productResponseDto.getCategory())
+                .deliveryDate(productResponseDto.getDeliveryDate())
+                .price(productResponseDto.getPrice())
+                .quantity(productResponseDto.getQuantity())
+                .user(user).build();
         System.out.println(product);
         productRepository.save(product);
         return ProductResponseDto.toDto(product);
@@ -81,7 +81,7 @@ public class ProductService {
     public ProductResponseDto updateProduct(long itemId, ProductResponseDto productResponseDto, User loginUser) {
 
         Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
-        if(loginUser.equals(product.getSeller())) {
+        if(loginUser.equals(product.getUser())) {
             // 토큰 보낸 사람과, 게시글 작성자가 같다면 성공!
             product.setProductName(productResponseDto.getProductName());
             product.setPrice(productResponseDto.getPrice());
@@ -102,7 +102,7 @@ public class ProductService {
     public void deleteProduct(Long itemId, User loginUser) {
         Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
 
-        if(loginUser.equals(product.getSeller())) {
+        if(loginUser.equals(product.getUser())) {
             productRepository.deleteById(itemId);
         } else {
             throw new UserNotEqualsException();

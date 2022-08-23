@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.entity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -21,4 +22,9 @@ public class Cart {
     @JoinColumn(name = "User_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User buyer;
+
+    @Builder
+    public Cart(User buyer){
+        this.buyer = buyer;
+    }
 }

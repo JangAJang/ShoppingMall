@@ -17,13 +17,13 @@ public class ProductDto {
     private String productName;
 
     @NotNull
-    private User userId;
+    private User user;
 
     @NotNull(message = "가격을 입력해주세요")
-    private int price;
+    private Integer price;
 
     @NotNull(message = "수량을 입력해주세요")
-    private int quantity;
+    private Integer quantity;
 
     @NotNull(message = "카테고리를 선택해주세요")
     private String category;
@@ -33,7 +33,7 @@ public class ProductDto {
     public static ProductDto toDto(Product product){
         return new ProductDto(
                 product.getProductName(),
-                product.getSeller(),
+                product.getUser(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getCategory(),

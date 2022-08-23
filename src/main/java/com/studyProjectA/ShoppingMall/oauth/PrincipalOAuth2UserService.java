@@ -51,7 +51,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserInfo.getEmail();
         String username = provider + "_" + providerId;
         String password = bCryptPasswordEncoder.encode("겟인데어");
-        String role = "USER";
+        String role = "ROLE_USER";
         String address = "주소 변경 필요";
         User userEntity = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
         if(userEntity == null){ //아이디 없음. 회원가입 진행
