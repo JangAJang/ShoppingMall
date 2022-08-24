@@ -26,7 +26,6 @@ public class UserService {
     public UserDto register(RegisterDto registerDto){
         User user = User.builder()
                 .username(registerDto.getUsername())
-                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
                 .email(registerDto.getEmail())
                 .address(registerDto.getAddress())
                 .role("ROLE_USER").build();

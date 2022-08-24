@@ -11,6 +11,7 @@ import com.studyProjectA.ShoppingMall.repository.CartRepository;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class CartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
 
+    @Transactional(readOnly = true)
     public List<CartItemDto> getMyCart(User user){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
@@ -34,6 +36,7 @@ public class CartService {
         return cartItemDtos;
     }
 
+    @Transactional
     public List<CartItemDto> checkPayment(User user){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Integer price = 0;
@@ -53,6 +56,7 @@ public class CartService {
         return cartItemDtos;
     }
 
+    @Transactional
     public List<CartItemDto> includeProductToCart(User user, Long productId, Integer howMany){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
@@ -70,6 +74,7 @@ public class CartService {
         return cartItemDtos;
     }
 
+    @Transactional
     public List<CartItemDto> excludeProductFromCart(User user, Long productId){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);

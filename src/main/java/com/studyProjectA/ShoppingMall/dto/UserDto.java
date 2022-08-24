@@ -12,14 +12,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UserDto {
 
-    @NotNull
-    private Long id;
-
     @NotNull(message = "아이디를 입력해주세요")
     private String username;
-
-    @NotNull(message = "비밀번호를 입력해주세요")
-    private String password;
 
     @NotNull(message = "이메일을 입력해주세요")
     private String email;
@@ -36,7 +30,7 @@ public class UserDto {
 
     public static UserDto toDto(User user){
         return new UserDto(
-                user.getId(), user.getUsername(), user.getPassword(), user.getEmail(), user.getRole(), user.getAddress(), user.getProvider(), user.getProviderId()
+                 user.getUsername(), user.getEmail(), user.getRole(), user.getAddress(), user.getProvider(), user.getProviderId()
         );
     }
 }

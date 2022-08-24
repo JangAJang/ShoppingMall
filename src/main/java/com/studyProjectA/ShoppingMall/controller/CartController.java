@@ -26,7 +26,7 @@ public class CartController {
 
     @ApiOperation(value = "결제하기", notes = "장바구니의 모든 품목의 가격을 합산해 알려줍니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/users/myPage/myCart/checkout")
+    @DeleteMapping("/carts/myCart/checkout")
     public Response checkPayment(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -35,7 +35,7 @@ public class CartController {
 
     @ApiOperation(value = "장바구니 품목 삭제", notes = "장바구니에서 선택한 품목을 제거합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/users/myPage/myCart/delete/{cartItem}")
+    @DeleteMapping("/carts/myPage/myCart/delete/{cartItem}")
     public Response excludeFromMyCart(@PathVariable("cartItem")Long cartItem){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -44,7 +44,7 @@ public class CartController {
 
     @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/products/{productId}/take/{quantity}")
+    @PostMapping("/carts/products/{productId}/take/{quantity}")
     public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -53,7 +53,7 @@ public class CartController {
 
     @ApiOperation(value = "장바구니 품목 보기", notes = "전체 장바구니 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/myPage/myCart")
+    @GetMapping("/carts/myCart")
     public Response showMyCart(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
