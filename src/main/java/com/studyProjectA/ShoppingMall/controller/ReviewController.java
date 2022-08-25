@@ -45,21 +45,21 @@ public class ReviewController {
 
     @ApiOperation(value = "전체 리뷰 게시글 보기", notes = "제품의 전체 리뷰를 조회합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{productId}/reviews/")
+    @GetMapping("/id?={productId}/reviews/")
     public Response findAll(@PathVariable("productId") Long productId) {
         return success(reviewService.getProductReviews(productId));
     }
 
     @ApiOperation(value = "리뷰 작성자로 검색",notes = "해당 유저의 제품 리뷰를 검색힙니다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{productId}/reviews/byUser/{username}")
+    @GetMapping("/id?={productId}/reviews/byUser/name?={username}")
     public Response findReviewByUsername(@PathVariable("productId") Long productId, @PathVariable("username") String username){
         return success(reviewService.getProductReviewsByUsername(productId, username));
     }
 
     @ApiOperation(value = "리뷰 내용으로 검색", notes = "리뷰에 등록된 내용을 검색합니다. ")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{productId}/reviews/byComment/{comment}")
+    @GetMapping("/id?={productId}/reviews/byComment/comment?={comment}")
     public Response findReviewByComment(@PathVariable("productId")Long productId, @PathVariable("comment")String comment){
         return success(reviewService.getProductReviewsByComment(productId, comment));
     }
@@ -67,7 +67,7 @@ public class ReviewController {
 
     @ApiOperation(value = "리뷰 게시글 작성", notes = "리뷰 게시글을 작성합니다.")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{productId}/reviews/write")
+    @PostMapping("/id?={productId}/reviews/write")
     public Response saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @PathVariable("productId") Long productId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User writer = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -76,7 +76,7 @@ public class ReviewController {
 
     @ApiOperation(value = "리뷰 게시글 수정", notes = "리뷰 게시글을 수정합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{productId}/reviews/{reviewId}/update")
+    @PutMapping("/id?={productId}/reviews/id?={reviewId}/update")
     public Response updateReview( @PathVariable("productId") String productId, @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequestDto reviewRequestDto) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         User writer = oldReview.getUser();
@@ -92,7 +92,7 @@ public class ReviewController {
 
     @ApiOperation(value = "리뷰 게시글 삭제", notes = "리뷰 게시글을 삭제합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{id}/reviews/{reviewId}/delete")
+    @DeleteMapping("/id?={id}/reviews/id?={reviewId}/delete")
     public Response deleteReview(@PathVariable("reviewId") Long reviewId, @PathVariable("id") String id) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         User writer = oldReview.getUser();

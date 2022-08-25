@@ -26,7 +26,7 @@ public class CartController {
 
     @ApiOperation(value = "결제하기", notes = "장바구니의 모든 품목의 가격을 합산해 알려줍니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/carts/myCart/checkout")
+    @DeleteMapping("/carts/checkout")
     public Response checkPayment(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -35,7 +35,7 @@ public class CartController {
 
     @ApiOperation(value = "장바구니 품목 삭제", notes = "장바구니에서 선택한 품목을 제거합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/carts/myPage/myCart/delete/{cartItem}")
+    @DeleteMapping("/carts/delete/id?={cartItem}")
     public Response excludeFromMyCart(@PathVariable("cartItem")Long cartItem){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -44,7 +44,7 @@ public class CartController {
 
     @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/carts/products/{productId}/take/{quantity}")
+    @PostMapping("/carts/products?={productId}/take/id?={quantity}")
     public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);

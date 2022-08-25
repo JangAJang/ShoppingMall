@@ -54,13 +54,6 @@ public class UserController {
         return Response.success();
     }
 
-    @ApiOperation(value = "등록 상품 목록", notes = "사용자가 등록한 상품을 표시합니다. ")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/my-products")
-    public Response showMyProducts(){
-        return Response.success();
-    }
-
     User getUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);

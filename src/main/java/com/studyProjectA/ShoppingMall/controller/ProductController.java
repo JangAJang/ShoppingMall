@@ -38,7 +38,7 @@ public class ProductController {
     // 개별 품목 조회
     @ApiOperation(value = "개별 품목보기", notes = "개별 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/{itemId}")
+    @GetMapping("/products/v?={{itemId}")
     public Response getProduct(@PathVariable("itemId") Long itemId) {
         return Response.success(productService.getProduct(itemId));
     }
@@ -46,7 +46,7 @@ public class ProductController {
     // 품목이름 검색하기
     @ApiOperation(value = "품목 검색하기",notes = "검색한 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/search/{searchProductName}")
+    @GetMapping("/products/search/item?={searchProductName}")
     public Response getSearchProducts(@PathVariable("searchProductName") String searchProductName){
         return Response.success(productService.getSearchProducts(searchProductName));
     }
@@ -58,7 +58,7 @@ public class ProductController {
 
     @ApiOperation(value = "검색한 유저가 등록한 품목 검색하기",notes = "검색한 유저의 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/searchUser/{userName}")
+    @GetMapping("/products/searchUser/user?={userName}")
     public Response getUserProducts(@PathVariable("userName") String userName){
         return Response.success(productService.getUserProducts(userName));
     }
@@ -77,7 +77,7 @@ public class ProductController {
     // 물품 수정
     @ApiOperation(value = "아이템 수정", notes = "아이템을 수정한다.")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/products/update/{itemId}")
+    @PutMapping("/products/update/item?={itemId}")
     public Response updateProduct(@PathVariable("itemId") Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -88,7 +88,7 @@ public class ProductController {
     // 물품 삭제
     @ApiOperation(value = "물품 삭제", notes = "물품을 삭제한다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/products/delete/{itemId}")
+    @DeleteMapping("/products/delete/item?={itemId}")
     public Response deleteProduct(@PathVariable("itemId") Long itemId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
@@ -98,7 +98,7 @@ public class ProductController {
 
     @ApiOperation(value = "나의 판매상품보기", notes = "내가 등록한 판매상품을 확인합니다. ")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/myPage/myProduct")
+    @GetMapping("/products/myProduct")
     public Response showMyProduct(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
