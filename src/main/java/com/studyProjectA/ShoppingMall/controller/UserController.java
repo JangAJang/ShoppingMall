@@ -30,7 +30,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/users/myPage")
     public Response myPage(){
-        return Response.success(userService.findUser(getUser().getId()));
+        return Response.success(userService.getMyPageInfo());
     }
 
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
@@ -52,12 +52,6 @@ public class UserController {
     @GetMapping("/manager")
     public Response manager(){
         return Response.success();
-    }
-
-    User getUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return loginUser;
     }
 
 

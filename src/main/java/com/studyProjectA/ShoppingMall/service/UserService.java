@@ -8,6 +8,8 @@ import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.CartRepository;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +47,10 @@ public class UserService {
         return userDtos;
     }
 
-    public User findUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        return user;
+    public UserDto getMyPageInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return UserDto.toDto(user);
     }
 
     public User findUserByUsername(String username){

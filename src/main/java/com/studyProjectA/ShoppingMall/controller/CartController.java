@@ -30,7 +30,7 @@ public class CartController {
     public Response checkPayment(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.checkPayment(user));
+        return Response.success(cartService.checkPayment(user));
     }
 
     @ApiOperation(value = "장바구니 품목 삭제", notes = "장바구니에서 선택한 품목을 제거합니다.")
@@ -39,7 +39,7 @@ public class CartController {
     public Response excludeFromMyCart(@PathVariable("cartItem")Long cartItem){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.excludeProductFromCart(user, cartItem));
+        return Response.success(cartService.excludeProductFromCart(user, cartItem));
     }
 
     @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
@@ -48,7 +48,7 @@ public class CartController {
     public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.includeProductToCart(loginUser, Long.parseLong(productId), Integer.parseInt(quantity)));
+        return Response.success(cartService.includeProductToCart(loginUser, Long.parseLong(productId), Integer.parseInt(quantity)));
     }
 
     @ApiOperation(value = "장바구니 품목 보기", notes = "전체 장바구니 품목을 조회한다.")
@@ -57,10 +57,6 @@ public class CartController {
     public Response showMyCart(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(cartService.getMyCart(user));
+        return Response.success(cartService.getMyCart(user));
     }
-
-
-
-
 }
