@@ -9,10 +9,13 @@ import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.ReviewNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
+import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import com.studyProjectA.ShoppingMall.repository.ReviewRepository;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +96,8 @@ public class ReviewService {
 
     // Create
     @Transactional
-    public List<ReviewResponseDto> saveReview(ReviewRequestDto reviewRequestDto,User writer, Long productId) {
+    public List<ReviewResponseDto> saveReview(ReviewRequestDto reviewRequestDto, Long productId) {
+        User writer = getUserInfo();
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         Review review = Review.builder()
                 .comment(reviewRequestDto.getComment())
@@ -113,8 +117,10 @@ public class ReviewService {
     // Update
     @Transactional
     public ReviewResponseDto updateReview(Long id, ReviewRequestDto reviewRequestDto) {
+        User user = getUserInfo();
         // 원래 있던 review 객체 불러옴
         Review originalReview = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
+        if(!user.equals(originalReview.getUser())) throw new UserNotEqualsException();
         // 오리지날리뷰에 새 리뷰객체의 정보 덮어쓰기
         originalReview.setRate(reviewRequestDto.getRate());
         originalReview.setComment(reviewRequestDto.getComment());
@@ -126,10 +132,19 @@ public class ReviewService {
 
     // Delete
     @Transactional
-    public void deleteReview(Long id) {
-        reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
+    public String deleteReview(Long id) {
+        User user = getUserInfo();
+        Review review = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
+        if(!user.equals(review.getUser())) throw new UserNotEqualsException();
         //리뷰 못 찾으면 예외처리
         reviewRepository.deleteById(id);
+        return "삭제 완료";
+    }
+
+    private User getUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return user;
     }
 
 }

@@ -69,42 +69,21 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/id?={productId}/reviews/write")
     public Response saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @PathVariable("productId") Long productId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User writer = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(reviewService.saveReview(reviewRequestDto, writer, productId));
+        return success(reviewService.saveReview(reviewRequestDto, productId));
     }
 
     @ApiOperation(value = "리뷰 게시글 수정", notes = "리뷰 게시글을 수정합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/id?={productId}/reviews/id?={reviewId}/update")
-    public Response updateReview( @PathVariable("productId") String productId, @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequestDto reviewRequestDto) {
-        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        User writer = oldReview.getUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        if(loginUser.equals(writer)){
-            return success(reviewService.updateReview(reviewId, reviewRequestDto));
-        }
-        else{
-            throw new UserNotEqualsException();
-        }
+    @PutMapping("/reviews/")
+    public Response updateReview(@RequestParam Long reviewId, @RequestBody ReviewRequestDto reviewRequestDto) {
+        return Response.success(reviewService.updateReview(reviewId, reviewRequestDto));
     }
 
     @ApiOperation(value = "리뷰 게시글 삭제", notes = "리뷰 게시글을 삭제합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/id?={id}/reviews/id?={reviewId}/delete")
-    public Response deleteReview(@PathVariable("reviewId") Long reviewId, @PathVariable("id") String id) {
-        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        User writer = oldReview.getUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        if(loginUser.equals(writer)){
-            reviewService.deleteReview(reviewId);
-            return success("삭제 완료");
-        }
-        else{
-            throw new UserNotEqualsException();
-        }
+    @DeleteMapping("/reviews/")
+    public Response deleteReview(@RequestParam Long reviewId) {
+        return Response.success(reviewService.deleteReview(reviewId));
     }
 
 }
