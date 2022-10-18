@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import static com.studyProjectA.ShoppingMall.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,27 +27,21 @@ public class CartController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/carts/checkout")
     public Response checkPayment(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return Response.success(cartService.checkPayment(user));
+        return Response.success(cartService.checkPayment());
     }
 
     @ApiOperation(value = "장바구니 품목 삭제", notes = "장바구니에서 선택한 품목을 제거합니다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/carts/delete/id?={cartItem}")
-    public Response excludeFromMyCart(@PathVariable("cartItem")Long cartItem){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return Response.success(cartService.excludeProductFromCart(user, cartItem));
+    @DeleteMapping("/carts/")
+    public Response excludeFromMyCart(@RequestParam Long cartItem){
+        return Response.success(cartService.excludeProductFromCart(cartItem));
     }
 
     @ApiOperation(value = "장바구니 담기", notes = "장바구니에 선택한 품목을 선택합니다. ")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/carts/products?={productId}/take/id?={quantity}")
-    public Response includeProductToMyCart(@PathVariable("productId")String productId, @PathVariable("quantity") String quantity){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return Response.success(cartService.includeProductToCart(loginUser, Long.parseLong(productId), Integer.parseInt(quantity)));
+    @PostMapping("/carts/")
+    public Response includeProductToMyCart(@RequestParam String productId, @RequestBody String quantity){
+        return Response.success(cartService.includeProductToCart(Long.parseLong(productId), Integer.parseInt(quantity)));
     }
 
     @ApiOperation(value = "장바구니 품목 보기", notes = "전체 장바구니 품목을 조회한다.")

@@ -9,7 +9,10 @@ import com.studyProjectA.ShoppingMall.excpetion.*;
 import com.studyProjectA.ShoppingMall.repository.CartItemRepository;
 import com.studyProjectA.ShoppingMall.repository.CartRepository;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
+import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartService {
 
+    private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
@@ -37,7 +41,8 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> checkPayment(User user){
+    public List<CartItemDto> checkPayment(){
+        User user = getUserInfo();
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Integer price = 0;
         List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
@@ -57,7 +62,8 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> includeProductToCart(User user, Long productId, Integer howMany){
+    public List<CartItemDto> includeProductToCart(Long productId, Integer howMany){
+        User user = getUserInfo();
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         if(howMany > product.getQuantity()){throw new ProductNotEnoughException();}
@@ -75,7 +81,8 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> excludeProductFromCart(User user, Long productId){
+    public List<CartItemDto> excludeProductFromCart(Long productId){
+        User user = getUserInfo();
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElseThrow(CartItemNotFoundException::new);
@@ -87,6 +94,12 @@ public class CartService {
             cartItemDtos.add(CartItemDto.toDto(cartItem1));
         }
         return cartItemDtos;
+    }
+
+    private User getUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return user;
     }
 
 }
