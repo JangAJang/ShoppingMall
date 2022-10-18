@@ -22,9 +22,6 @@ import static com.studyProjectA.ShoppingMall.response.Response.success;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final CartService cartService;
-    private final ProductService productService;
 
     @ApiOperation(value = "마이페이지" ,notes = "마이 페이지를 조회합니다. ")
     @ResponseStatus(HttpStatus.OK)

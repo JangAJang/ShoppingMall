@@ -25,12 +25,11 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserRepository userRepository;
-    private final CartService cartService;
 
     // 전체 품목 조회
     @ApiOperation(value = "전체 물품 보기", notes = "전체 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products")
+    @GetMapping("/products/")
     public Response getProducts() {
         return Response.success(productService.getProducts());
     }
@@ -38,17 +37,17 @@ public class ProductController {
     // 개별 품목 조회
     @ApiOperation(value = "개별 품목보기", notes = "개별 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/v?={{itemId}")
-    public Response getProduct(@PathVariable("itemId") Long itemId) {
+    @GetMapping("/products/")
+    public Response getProduct(@RequestParam Long itemId) {
         return Response.success(productService.getProduct(itemId));
     }
 
     // 품목이름 검색하기
     @ApiOperation(value = "품목 검색하기",notes = "검색한 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/search/item?={searchProductName}")
-    public Response getSearchProducts(@PathVariable("searchProductName") String searchProductName){
-        return Response.success(productService.getSearchProducts(searchProductName));
+    @GetMapping("/products/byName/")
+    public Response getSearchProducts(@RequestParam String name){
+        return Response.success(productService.getSearchProducts(name));
     }
 
     //사용자검색으로 아이템 목록보기
@@ -58,50 +57,40 @@ public class ProductController {
 
     @ApiOperation(value = "검색한 유저가 등록한 품목 검색하기",notes = "검색한 유저의 품목을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/searchUser/user?={userName}")
-    public Response getUserProducts(@PathVariable("userName") String userName){
+    @GetMapping("/products/byUser/")
+    public Response getUserProducts(@RequestParam String userName){
         return Response.success(productService.getUserProducts(userName));
     }
 
     // 물품 등록
     @ApiOperation(value = "아이템 등록", notes = "아이템을 등록한다.")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/products/load")
+    @PostMapping("/products/")
     public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-
-        return Response.success(productService.addProduct(productResponseDto, loginUser));
+        return Response.success(productService.addProduct(productResponseDto));
     }
 
     // 물품 수정
     @ApiOperation(value = "아이템 수정", notes = "아이템을 수정한다.")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/products/update/item?={itemId}")
-    public Response updateProduct(@PathVariable("itemId") Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return Response.success(productService.updateProduct(itemId, productResponseDto, loginUser));
+    @PutMapping("/products/")
+    public Response updateProduct(@RequestParam Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
+        return Response.success(productService.updateProduct(itemId, productResponseDto));
 
     }
 
     // 물품 삭제
     @ApiOperation(value = "물품 삭제", notes = "물품을 삭제한다.")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/products/delete/item?={itemId}")
-    public Response deleteProduct(@PathVariable("itemId") Long itemId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loginUser = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        productService.deleteProduct(itemId, loginUser);
-        return Response.success("삭제 완료");
+    @DeleteMapping("/products/")
+    public Response deleteProduct(@RequestParam Long itemId) {
+        return Response.success(productService.deleteProduct(itemId));
     }
 
     @ApiOperation(value = "나의 판매상품보기", notes = "내가 등록한 판매상품을 확인합니다. ")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/products/myProduct")
+    @GetMapping("/products/my")
     public Response showMyProduct(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return success(productService.getUserProducts(user.getUsername()));
+        return success(productService.getMyProducts());
     }
 }
