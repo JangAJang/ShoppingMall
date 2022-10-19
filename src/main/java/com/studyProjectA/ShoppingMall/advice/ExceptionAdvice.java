@@ -87,4 +87,10 @@ public class ExceptionAdvice {
     public Response emailAlreadyExistsException(){
         return Response.failure(404, "이미 존재하는 이메일입니다. ");
     }
+
+    @ExceptionHandler(PasswordNotEqualException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public Response passwordNotEqualException(){
+        return Response.failure(404, "비밀번호가 서로 일치하지 않습니다.");
+    }
 }
