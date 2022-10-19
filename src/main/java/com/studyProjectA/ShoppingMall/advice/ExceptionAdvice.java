@@ -75,4 +75,16 @@ public class ExceptionAdvice {
     public Response userNotEqualsException() {
         return Response.failure(401, "권한이 없습니다.");
     }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.ALREADY_REPORTED)
+    public Response usernameAlreadyExistsException(){
+        return Response.failure(404, "이미 존재하는 계정입니다. ");
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.ALREADY_REPORTED)
+    public Response emailAlreadyExistsException(){
+        return Response.failure(404, "이미 존재하는 이메일입니다. ");
+    }
 }
