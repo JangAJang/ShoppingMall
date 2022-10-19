@@ -69,21 +69,30 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/id?={productId}/reviews/write")
     public Response saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @PathVariable("productId") Long productId) {
-        return success(reviewService.saveReview(reviewRequestDto, productId));
+        User user = getLoginUserInfo();
+        return success(reviewService.saveReview(user, reviewRequestDto, productId));
     }
 
     @ApiOperation(value = "리뷰 게시글 수정", notes = "리뷰 게시글을 수정합니다.")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/reviews/")
     public Response updateReview(@RequestParam Long reviewId, @RequestBody ReviewRequestDto reviewRequestDto) {
-        return Response.success(reviewService.updateReview(reviewId, reviewRequestDto));
+        User user = getLoginUserInfo();
+        return Response.success(reviewService.updateReview(user, reviewId, reviewRequestDto));
     }
 
     @ApiOperation(value = "리뷰 게시글 삭제", notes = "리뷰 게시글을 삭제합니다.")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/reviews/")
     public Response deleteReview(@RequestParam Long reviewId) {
-        return Response.success(reviewService.deleteReview(reviewId));
+        User user = getLoginUserInfo();
+        return Response.success(reviewService.deleteReview(user, reviewId));
+    }
+
+    private User getLoginUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return user;
     }
 
 }

@@ -5,7 +5,6 @@ import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import com.studyProjectA.ShoppingMall.response.Response;
-import com.studyProjectA.ShoppingMall.service.CartService;
 import com.studyProjectA.ShoppingMall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -67,15 +66,15 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/products/")
     public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
-        return Response.success(productService.addProduct(productResponseDto));
+        return Response.success(productService.addProduct(getLoginUserInfo(), productResponseDto));
     }
 
     // 물품 수정
     @ApiOperation(value = "아이템 수정", notes = "아이템을 수정한다.")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/products/")
-    public Response updateProduct(@RequestParam Integer itemId, @RequestBody ProductResponseDto productResponseDto) {
-        return Response.success(productService.updateProduct(itemId, productResponseDto));
+    public Response updateProduct(@RequestParam Long itemId, @RequestBody ProductResponseDto productResponseDto) {
+        return Response.success(productService.updateProduct(getLoginUserInfo(), itemId, productResponseDto));
 
     }
 
@@ -84,13 +83,18 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/products/")
     public Response deleteProduct(@RequestParam Long itemId) {
-        return Response.success(productService.deleteProduct(itemId));
+        return Response.success(productService.deleteProduct(getLoginUserInfo(), itemId));
     }
 
     @ApiOperation(value = "나의 판매상품보기", notes = "내가 등록한 판매상품을 확인합니다. ")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/products/my")
     public Response showMyProduct(){
-        return success(productService.getMyProducts());
+        return success(productService.getMyProducts(getLoginUserInfo()));
+    }
+
+    private User getLoginUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
     }
 }

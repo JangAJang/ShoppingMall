@@ -41,8 +41,7 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> checkPayment(){
-        User user = getUserInfo();
+    public List<CartItemDto> checkPayment(User user){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Integer price = 0;
         List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
@@ -62,8 +61,7 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> includeProductToCart(Long productId, Integer howMany){
-        User user = getUserInfo();
+    public List<CartItemDto> includeProductToCart(User user, Long productId, Integer howMany){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         if(howMany > product.getQuantity()){throw new ProductNotEnoughException();}
@@ -81,8 +79,7 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItemDto> excludeProductFromCart(Long productId){
-        User user = getUserInfo();
+    public List<CartItemDto> excludeProductFromCart(User user, Long productId){
         Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElseThrow(CartItemNotFoundException::new);
@@ -94,12 +91,6 @@ public class CartService {
             cartItemDtos.add(CartItemDto.toDto(cartItem1));
         }
         return cartItemDtos;
-    }
-
-    private User getUserInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return user;
     }
 
 }

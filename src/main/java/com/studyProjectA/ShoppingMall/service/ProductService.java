@@ -9,8 +9,6 @@ import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -65,15 +63,14 @@ public class ProductService {
 
     // 아이템 등록
     @Transactional
-    public ProductResponseDto addProduct(ProductResponseDto productResponseDto){
-        User user = getUserInfo();
+    public ProductResponseDto addProduct(User loginUser, ProductResponseDto productResponseDto){
         Product product = Product.builder()
                 .productName(productResponseDto.getProductName())
                 .category(productResponseDto.getCategory())
                 .deliveryDate(productResponseDto.getDeliveryDate())
                 .price(productResponseDto.getPrice())
                 .quantity(productResponseDto.getQuantity())
-                .user(user).build();
+                .user(loginUser).build();
         System.out.println(product);
         productRepository.save(product);
         return ProductResponseDto.toDto(product);
@@ -81,8 +78,7 @@ public class ProductService {
 
     // 아이템 수정
     @Transactional
-    public ProductResponseDto updateProduct(long itemId, ProductResponseDto productResponseDto) {
-        User loginUser = getUserInfo();
+    public ProductResponseDto updateProduct(User loginUser, Long itemId, ProductResponseDto productResponseDto) {
         Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
         if(loginUser.equals(product.getUser())) {
             // 토큰 보낸 사람과, 게시글 작성자가 같다면 성공!
@@ -102,8 +98,7 @@ public class ProductService {
 
     // 아이템 삭제
     @Transactional
-    public String deleteProduct(Long itemId) {
-        User loginUser = getUserInfo();
+    public String deleteProduct(User loginUser, Long itemId) {
         Product product = productRepository.findById(itemId).orElseThrow(ProductNotFoundException::new);
         if(loginUser.equals(product.getUser())) {
             productRepository.deleteById(itemId);
@@ -114,19 +109,12 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductResponseDto> getMyProducts(){
-        User me = getUserInfo();
-        List<Product> products = productRepository.findAllByUser(me);
+    public List<ProductResponseDto> getMyProducts(User loginUser){
+        List<Product> products = productRepository.findAllByUser(loginUser);
         if (products.isEmpty())throw new ProductNotFoundException();
         List<ProductResponseDto> productResponseDtos = new ArrayList<>();
         products.forEach(s->productResponseDtos.add(ProductResponseDto.toDto(s)));
         if(productResponseDtos.isEmpty()) throw new ProductNotFoundException();
         return productResponseDtos;
-    }
-
-    private User getUserInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return user;
     }
 }

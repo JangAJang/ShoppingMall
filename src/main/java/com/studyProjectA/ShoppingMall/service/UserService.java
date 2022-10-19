@@ -47,12 +47,6 @@ public class UserService {
         return userDtos;
     }
 
-    public UserDto getMyPageInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return UserDto.toDto(user);
-    }
-
     public User findUserByUsername(String username){
         User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
         return user;

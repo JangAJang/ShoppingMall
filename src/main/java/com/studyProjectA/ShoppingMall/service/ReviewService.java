@@ -96,8 +96,7 @@ public class ReviewService {
 
     // Create
     @Transactional
-    public List<ReviewResponseDto> saveReview(ReviewRequestDto reviewRequestDto, Long productId) {
-        User writer = getUserInfo();
+    public List<ReviewResponseDto> saveReview(User writer, ReviewRequestDto reviewRequestDto, Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         Review review = Review.builder()
                 .comment(reviewRequestDto.getComment())
@@ -116,8 +115,7 @@ public class ReviewService {
 
     // Update
     @Transactional
-    public ReviewResponseDto updateReview(Long id, ReviewRequestDto reviewRequestDto) {
-        User user = getUserInfo();
+    public ReviewResponseDto updateReview(User user, Long id, ReviewRequestDto reviewRequestDto) {
         // 원래 있던 review 객체 불러옴
         Review originalReview = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
         if(!user.equals(originalReview.getUser())) throw new UserNotEqualsException();
@@ -132,19 +130,12 @@ public class ReviewService {
 
     // Delete
     @Transactional
-    public String deleteReview(Long id) {
-        User user = getUserInfo();
+    public String deleteReview(User user, Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
         if(!user.equals(review.getUser())) throw new UserNotEqualsException();
         //리뷰 못 찾으면 예외처리
         reviewRepository.deleteById(id);
         return "삭제 완료";
-    }
-
-    private User getUserInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return user;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.controller;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
+import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
@@ -22,12 +23,15 @@ import static com.studyProjectA.ShoppingMall.response.Response.success;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @ApiOperation(value = "마이페이지" ,notes = "마이 페이지를 조회합니다. ")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/users/myPage")
     public Response myPage(){
-        return Response.success(userService.getMyPageInfo());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        return Response.success(UserDto.toDto(user));
     }
 
     @ApiOperation(value = "회원가입", notes = "회원가입 진행")
