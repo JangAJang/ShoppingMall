@@ -11,6 +11,7 @@ import com.studyProjectA.ShoppingMall.repository.CartRepository;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.collection.internal.PersistentList;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,47 +23,32 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CartService {
-
-    private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
 
     @Transactional(readOnly = true)
     public List<CartItemDto> getMyCart(User user){
-        Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
-        List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem item : cartItems){
-            if(item.getCart().equals(cart)) cartItemDtos.add(CartItemDto.toDto(item));
-        }
-        if(cartItems.isEmpty()) throw new CartEmptyException();
-        return cartItemDtos;
+        Cart cart = getCartByUser(user);
+        List<CartItem> cartItems = getItemsFromCart(cart);
+        return changeCartItemListToDto(cartItems);
     }
 
     @Transactional
-    public List<CartItemDto> checkPayment(User user){
-        Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
-        Integer price = 0;
-        List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
-        for(CartItem cartItem : cartItems){
-            price  = price + cartItem.getProduct().getPrice() * cartItem.getQuantity();
-        }
-        if(cartItems.isEmpty()) throw new CartEmptyException();
+    public Long checkPayment(User user){
+        Cart cart = getCartByUser(user);
+        List<CartItem> cartItems = getItemsFromCart(cart);
+        Long price = getTotalPrice(cartItems);
         cartRepository.delete(cart);
         Cart newCart = Cart.builder()
                 .buyer(user).build();
         cartRepository.save(newCart);
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem1 : cartItems){
-            cartItemDtos.add(CartItemDto.toDto(cartItem1));
-        }
-        return cartItemDtos;
+        return price;
     }
 
     @Transactional
     public List<CartItemDto> includeProductToCart(User user, Long productId, Integer howMany){
-        Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
+        Cart cart = getCartByUser(user);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         if(howMany > product.getQuantity()){throw new ProductNotEnoughException();}
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElse(
@@ -70,27 +56,45 @@ public class CartService {
         );
         cartItem.setQuantity(cartItem.getQuantity() + howMany);
         cartItemRepository.save(cartItem);
-        List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem1 : cartItems){
-            cartItemDtos.add(CartItemDto.toDto(cartItem1));
-        }
-        return cartItemDtos;
+        List<CartItem> cartItems = getItemsFromCart(cart);
+        return changeCartItemListToDto(cartItems);
     }
 
     @Transactional
     public List<CartItemDto> excludeProductFromCart(User user, Long productId){
-        Cart cart = cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
+        Cart cart = getCartByUser(user);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElseThrow(CartItemNotFoundException::new);
         product.setQuantity(product.getQuantity() + cartItem.getQuantity());
         cartItemRepository.delete(cartItem);
-        List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
+        List<CartItem> cartItems = getItemsFromCart(cart);
+        return changeCartItemListToDto(cartItems);
+    }
+
+    private Cart getCartByUser(User user){
+        return cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
+    }
+
+    private List<CartItem> getItemsFromCart(Cart cart){
+        List<CartItem> cartItems =  cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
+        if(cartItems.isEmpty())throw new CartEmptyException();
+        return cartItems;
+    }
+
+    private List<CartItemDto> changeCartItemListToDto(List<CartItem> cartItems){
         List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem1 : cartItems){
-            cartItemDtos.add(CartItemDto.toDto(cartItem1));
+        for(CartItem cartItem : cartItems){
+            cartItemDtos.add(CartItemDto.toDto(cartItem));
         }
         return cartItemDtos;
+    }
+
+    private Long getTotalPrice(List<CartItem> cartItems){
+        Long result = 0L;
+        for(CartItem cartItem : cartItems){
+            result = result + (long) cartItem.getProduct().getPrice() * cartItem.getQuantity();
+        }
+        return result;
     }
 
 }
