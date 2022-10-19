@@ -1,4 +1,5 @@
 package com.studyProjectA.ShoppingMall.controller;
+import com.studyProjectA.ShoppingMall.dto.LoginRequestDto;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
 import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.User;
@@ -39,6 +40,13 @@ public class UserController {
     @PostMapping("/join")
     public Response register(@RequestBody RegisterDto registerDto) {
         return Response.success(userService.register(registerDto));
+    }
+
+    @ApiOperation(value = "로그인")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @GetMapping("/login")
+    public Response login(@RequestBody LoginRequestDto loginRequestDto){
+        return Response.success(userService.login(loginRequestDto));
     }
 
     @ApiOperation(value = "관리자 페이지", notes = "관리자페이지 조회")
