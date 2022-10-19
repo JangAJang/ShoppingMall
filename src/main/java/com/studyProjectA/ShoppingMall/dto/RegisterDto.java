@@ -16,6 +16,9 @@ public class RegisterDto {
     @NotNull(message = "password를 입력해주세요.")
     private String password;
 
+    @NotNull(message = "password를 한번 더 입력해주세요")
+    private String passwordCheck;
+
     @NotNull(message = "email을 입력해주세요.")
     private String email;
 
