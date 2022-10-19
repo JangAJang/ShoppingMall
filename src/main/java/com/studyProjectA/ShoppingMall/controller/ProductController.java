@@ -1,6 +1,6 @@
 package com.studyProjectA.ShoppingMall.controller;
 
-import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
+import com.studyProjectA.ShoppingMall.dto.ProductDto;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.UserRepository;
@@ -46,7 +46,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/products/byName/")
     public Response getSearchProducts(@RequestParam String name){
-        return Response.success(productService.getSearchProducts(name));
+        return Response.success(productService.searchProductsByName(name));
     }
 
     //사용자검색으로 아이템 목록보기
@@ -58,23 +58,23 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/products/byUser/")
     public Response getUserProducts(@RequestParam String userName){
-        return Response.success(productService.getUserProducts(userName));
+        return Response.success(productService.searchProductsByUsername(userName));
     }
 
     // 물품 등록
     @ApiOperation(value = "아이템 등록", notes = "아이템을 등록한다.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/products/")
-    public Response loadProduct(@RequestBody ProductResponseDto productResponseDto) {
-        return Response.success(productService.addProduct(getLoginUserInfo(), productResponseDto));
+    public Response loadProduct(@RequestBody ProductDto productDto) {
+        return Response.success(productService.addProduct(getLoginUserInfo(), productDto));
     }
 
     // 물품 수정
     @ApiOperation(value = "아이템 수정", notes = "아이템을 수정한다.")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/products/")
-    public Response updateProduct(@RequestParam Long itemId, @RequestBody ProductResponseDto productResponseDto) {
-        return Response.success(productService.updateProduct(getLoginUserInfo(), itemId, productResponseDto));
+    public Response updateProduct(@RequestParam Long itemId, @RequestBody ProductDto productDto) {
+        return Response.success(productService.updateProduct(getLoginUserInfo(), itemId, productDto));
 
     }
 
