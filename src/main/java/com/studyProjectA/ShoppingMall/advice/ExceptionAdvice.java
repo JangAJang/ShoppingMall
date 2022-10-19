@@ -93,4 +93,16 @@ public class ExceptionAdvice {
     public Response passwordNotEqualException(){
         return Response.failure(404, "비밀번호가 서로 일치하지 않습니다.");
     }
+
+    @ExceptionHandler(UserSellerNotEqualException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public Response userSellerNotEqualException(){
+        return Response.failure(404, "해당 제품의 판매자가 아닙니다.");
+    }
+
+    @ExceptionHandler(ProductNameAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public Response productNameAlreadyExistsException(){
+        return Response.failure(404, "이미 존재하는 상품명입니다.");
+    }
 }
