@@ -5,6 +5,7 @@ import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.Cart;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.EmailAlreadyExistsException;
+import com.studyProjectA.ShoppingMall.excpetion.PasswordNotEqualException;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.UsernameAlreadyExistsException;
 import com.studyProjectA.ShoppingMall.repository.CartRepository;
@@ -56,6 +57,11 @@ public class UserService {
     public void validateRegisterDto(RegisterDto registerDto){
         validateUsername(registerDto.getUsername());
         validateEmail(registerDto.getEmail());
+        validatePassword(registerDto);
+    }
+
+    public void validatePassword(RegisterDto registerDto){
+        if(!registerDto.getPassword().equals(registerDto.getPasswordCheck())) throw new PasswordNotEqualException();
     }
 
     public User createUser(RegisterDto registerDto){
