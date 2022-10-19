@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.service;
 
+import com.studyProjectA.ShoppingMall.dto.LoginRequestDto;
 import com.studyProjectA.ShoppingMall.dto.RegisterDto;
 import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.Cart;
@@ -33,6 +34,15 @@ public class UserService {
     }
 
     @Transactional
+    public UserDto login(LoginRequestDto loginRequestDto){
+        User user = findUserByUsername(loginRequestDto.getUsername());
+        if(user.getPassword().equals(bCryptPasswordEncoder.encode(loginRequestDto.getPassword()))){
+            throw new PasswordNotEqualException();
+        }
+        return UserDto.toDto(user);
+    }
+
+    @Transactional(readOnly = true)
     public List<User> findAllUsers(){
         return userRepository.findAll();
     }
@@ -86,4 +96,6 @@ public class UserService {
                 .buyer(user).build();
         cartRepository.save(cart);
     }
+
+
 }
