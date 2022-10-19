@@ -50,7 +50,7 @@ public class CartService {
     public List<CartItemDto> includeProductToCart(User user, Long productId, Integer howMany){
         Cart cart = getCartByUser(user);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        if(howMany > product.getQuantity()){throw new ProductNotEnoughException();}
+        if(howMany > product.getQuantity())throw new ProductNotEnoughException();
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElse(
                 CartItem.builder().product(product).quantity(0).cart(cart).build()
         );
@@ -71,17 +71,17 @@ public class CartService {
         return changeCartItemListToDto(cartItems);
     }
 
-    private Cart getCartByUser(User user){
+    public Cart getCartByUser(User user){
         return cartRepository.findByBuyer(user).orElseThrow(CartNotFoundException::new);
     }
 
-    private List<CartItem> getItemsFromCart(Cart cart){
-        List<CartItem> cartItems =  cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
-        if(cartItems.isEmpty())throw new CartEmptyException();
+    public List<CartItem> getItemsFromCart(Cart cart){
+        List<CartItem> cartItems = cartItemRepository.findAllByCart(cart).orElseThrow(CartItemNotFoundException::new);
+        validateCartItemExistence(cartItems);
         return cartItems;
     }
 
-    private List<CartItemDto> changeCartItemListToDto(List<CartItem> cartItems){
+    public List<CartItemDto> changeCartItemListToDto(List<CartItem> cartItems){
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem : cartItems){
             cartItemDtos.add(CartItemDto.toDto(cartItem));
@@ -89,12 +89,16 @@ public class CartService {
         return cartItemDtos;
     }
 
-    private Long getTotalPrice(List<CartItem> cartItems){
+    public Long getTotalPrice(List<CartItem> cartItems){
         Long result = 0L;
         for(CartItem cartItem : cartItems){
             result = result + (long) cartItem.getProduct().getPrice() * cartItem.getQuantity();
         }
         return result;
+    }
+
+    public void validateCartItemExistence(List<CartItem> cartItems){
+        if(cartItems.isEmpty()) throw new CartEmptyException();
     }
 
 }
