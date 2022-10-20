@@ -1,6 +1,5 @@
 package com.studyProjectA.ShoppingMall.entity;
 
-import com.studyProjectA.ShoppingMall.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,4 +40,5 @@ public class Product {
 
     @Column
     private Long deliveryDate;
+
 }

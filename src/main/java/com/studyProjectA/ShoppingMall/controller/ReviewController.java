@@ -54,14 +54,14 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/id?={productId}/reviews/byUser/name?={username}")
     public Response findReviewByUsername(@PathVariable("productId") Long productId, @PathVariable("username") String username){
-        return success(reviewService.getProductReviewsByUsername(productId, username));
+        return success(reviewService.searchProductReviewsByUsername(productId, username));
     }
 
     @ApiOperation(value = "리뷰 내용으로 검색", notes = "리뷰에 등록된 내용을 검색합니다. ")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/id?={productId}/reviews/byComment/comment?={comment}")
     public Response findReviewByComment(@PathVariable("productId")Long productId, @PathVariable("comment")String comment){
-        return success(reviewService.getProductReviewsByComment(productId, comment));
+        return success(reviewService.searchProductReviewsByComment(productId, comment));
     }
 
 

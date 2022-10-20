@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,6 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     // Read All
     @Transactional(readOnly = true)
@@ -51,42 +51,21 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewResponseDto> getProductReviews(Long productId){
-        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        List<Review> reviews = reviewRepository.findAll();
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review review : reviews) {
-            if(review.getProduct().equals(product)) {
-                reviewResponseDtos.add(ReviewResponseDto.toDto(review));
-            }
-        }
-        return reviewResponseDtos;
+        return changeEntityToDto(getAllReviewsByProduct(productId));
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponseDto> getProductReviewsByUsername(Long productId, String username){
-        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        User user = userRepository.findByUsername(username).orElseThrow(UserNotEqualsException::new);
-        List<Review> reviews = reviewRepository.findAll();
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review review : reviews){
-            if(review.getProduct().getUser().getUsername().equals(product.getUser().getUsername()) && review.getUser().getUsername().equals(user.getUsername())){
-                reviewResponseDtos.add(ReviewResponseDto.toDto(review));
-            }
-        }
-        return reviewResponseDtos;
+    public List<ReviewResponseDto> searchProductReviewsByUsername(Long productId, String username){
+        List<Review> review = getAllReviewsByProduct(productId);
+        filterByUsername(review, username);
+        return changeEntityToDto(review);
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponseDto> getProductReviewsByComment(Long productId, String comment){
-        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        List<Review> reviews = reviewRepository.findAll();
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review review : reviews){
-            if(review.getProduct().equals(product) && review.getComment().contains(comment)){
-                reviewResponseDtos.add(ReviewResponseDto.toDto(review));
-            }
-        }
-        return reviewResponseDtos;
+    public List<ReviewResponseDto> searchProductReviewsByComment(Long productId, String comment){
+        List<Review> review = getAllReviewsByProduct(productId);
+        filterByComment(review, comment);
+        return changeEntityToDto(review);
     }
 
     @Transactional(readOnly = true)
@@ -96,46 +75,72 @@ public class ReviewService {
 
     // Create
     @Transactional
-    public List<ReviewResponseDto> saveReview(User writer, ReviewRequestDto reviewRequestDto, Long productId) {
+    public ReviewResponseDto saveReview(User writer, ReviewRequestDto reviewRequestDto, Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        Review review = Review.builder()
-                .comment(reviewRequestDto.getComment())
-                .product(product)
-                .rate(reviewRequestDto.getRate())
-                .user(writer)
-                .build();
+        Review review = new Review();
+        setDtoToEntity(reviewRequestDto, review);
+        review.setUser(writer);
+        review.setProduct(product);
+        review.setCreateDate(LocalDate.now());
         reviewRepository.save(review);
-        List<Review> reviews = reviewRepository.findAllByProduct_Id(product.getId()).orElseThrow(ReviewNotFoundException::new);
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review review1 : reviews){
-            reviewResponseDtos.add(ReviewResponseDto.toDto(review1));
-        }
-        return reviewResponseDtos;
+        return ReviewResponseDto.toDto(review);
     }
 
     // Update
     @Transactional
     public ReviewResponseDto updateReview(User user, Long id, ReviewRequestDto reviewRequestDto) {
-        // 원래 있던 review 객체 불러옴
-        Review originalReview = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
-        if(!user.equals(originalReview.getUser())) throw new UserNotEqualsException();
-        // 오리지날리뷰에 새 리뷰객체의 정보 덮어쓰기
-        originalReview.setRate(reviewRequestDto.getRate());
-        originalReview.setComment(reviewRequestDto.getComment());
-        originalReview.createDate();
-        // 저장 후 리턴
-        reviewRepository.save(originalReview);
-        return ReviewResponseDto.toDto(originalReview);
+        Review review = getReview(id);
+        validateUserAuthority(user, review);
+        setDtoToEntity(reviewRequestDto, review);
+        review.setUser(review.getUser());
+        review.setProduct(review.getProduct());
+        review.setCreateDate(review.getCreateDate());
+        reviewRepository.save(review);
+        return ReviewResponseDto.toDto(review);
     }
 
     // Delete
     @Transactional
     public String deleteReview(User user, Long id) {
-        Review review = reviewRepository.findById(id).orElseThrow(ReviewNotFoundException::new);
-        if(!user.equals(review.getUser())) throw new UserNotEqualsException();
-        //리뷰 못 찾으면 예외처리
-        reviewRepository.deleteById(id);
+        Review review = getReview(id);
+        validateUserAuthority(user, review);
+        reviewRepository.delete(review);
         return "삭제 완료";
+    }
+
+    public List<Review> getAllReviewsByProduct(Long id){
+        List<Review> list =  reviewRepository.findAllByProduct_Id(id).orElseThrow(ReviewNotFoundException::new);
+        if(list.isEmpty()) throw new ReviewNotFoundException();
+        return list;
+    }
+
+    public List<ReviewResponseDto> changeEntityToDto(List<Review> reviews){
+        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+        for(Review review : reviews){
+            reviewResponseDtos.add(ReviewResponseDto.toDto(review));
+        }
+        return reviewResponseDtos;
+    }
+
+    public void validateUserAuthority(User user, Review review){
+        if(!user.equals(review.getUser())) throw new UserNotEqualsException();
+    }
+
+    public void filterByUsername(List<Review> reviews, String username){
+        for(Review review : reviews){
+            if(!review.getUser().getUsername().contains(username)) reviews.remove(review);
+        }
+    }
+
+    public void filterByComment(List<Review> reviews, String content){
+        for(Review review : reviews){
+            if(!review.getComment().contains(content)) reviews.remove(review);
+        }
+    }
+
+    public void setDtoToEntity(ReviewRequestDto reviewRequestDto, Review review){
+        review.setComment(reviewRequestDto.getComment());
+        review.setRate(reviewRequestDto.getRate());
     }
 
 }
