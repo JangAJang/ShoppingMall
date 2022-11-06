@@ -18,13 +18,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "User_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User buyer;
-
-    @Builder
-    public Cart(User buyer){
-        this.buyer = buyer;
-    }
+    @OneToOne(mappedBy = "cart")
+    private User user;
 }
