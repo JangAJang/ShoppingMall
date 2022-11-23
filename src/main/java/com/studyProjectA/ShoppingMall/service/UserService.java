@@ -30,7 +30,10 @@ public class UserService {
     @Transactional
     public UserDto register(RegisterDto registerDto){
         validateRegisterDto(registerDto);
-        return UserDto.toDto(createUser(registerDto));
+        User newUser = new User();
+        userRepository.save(newUser.makeNewUser(registerDto));
+        createCartForRegister(newUser);
+        return UserDto.toDto(newUser);
     }
 
     @Transactional
@@ -74,26 +77,9 @@ public class UserService {
         if(!registerDto.getPassword().equals(registerDto.getPasswordCheck())) throw new PasswordNotEqualException();
     }
 
-    public User createUser(RegisterDto registerDto){
-        User user = addUserByRegisterDto(registerDto);
-        createCartForRegister(user);
-        return user;
-    }
-
-    public User addUserByRegisterDto(RegisterDto registerDto){
-        User user = User.builder()
-                .username(registerDto.getUsername())
-                .email(registerDto.getEmail())
-                .address(registerDto.getAddress())
-                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
-                .role("ROLE_USER").build();
-        userRepository.save(user);
-        return user;
-    }
-
     public void createCartForRegister(User user){
         Cart cart = Cart.builder()
-                .buyer(user).build();
+                .user(user).build();
         cartRepository.save(cart);
     }
 

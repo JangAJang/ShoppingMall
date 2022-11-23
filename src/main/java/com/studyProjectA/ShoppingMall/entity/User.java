@@ -1,20 +1,28 @@
 package com.studyProjectA.ShoppingMall.entity;
 
+import com.studyProjectA.ShoppingMall.dto.LoginRequestDto;
+import com.studyProjectA.ShoppingMall.dto.RegisterDto;
+import com.studyProjectA.ShoppingMall.excpetion.EmailAlreadyExistsException;
+import com.studyProjectA.ShoppingMall.excpetion.PasswordNotEqualException;
+import com.studyProjectA.ShoppingMall.excpetion.UsernameAlreadyExistsException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,17 +58,14 @@ public class User {
         }
         return new ArrayList<>();
     }
-
-
-    @Builder
-    public User(String username, String password, String email, String role, String provider, String providerId, String address) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-        this.provider = provider;
-        this.providerId = providerId;
-        this.address = address;
+    public User makeNewUser(RegisterDto registerDto){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return User.builder()
+                .username(registerDto.getUsername())
+                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
+                .email(registerDto.getEmail())
+                .role("ROLE_USER")
+                .address(registerDto.getAddress())
+                .build();
     }
 }
