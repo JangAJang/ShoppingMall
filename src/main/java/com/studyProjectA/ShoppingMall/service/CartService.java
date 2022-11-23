@@ -9,11 +9,7 @@ import com.studyProjectA.ShoppingMall.excpetion.*;
 import com.studyProjectA.ShoppingMall.repository.CartItemRepository;
 import com.studyProjectA.ShoppingMall.repository.CartRepository;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
-import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.collection.internal.PersistentList;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +37,7 @@ public class CartService {
         Long price = getTotalPrice(cartItems);
         cartRepository.delete(cart);
         Cart newCart = Cart.builder()
-                .buyer(user).build();
+                .user(user).build();
         cartRepository.save(newCart);
         return price;
     }
