@@ -68,4 +68,8 @@ public class User {
                 .address(registerDto.getAddress())
                 .build();
     }
+
+    public boolean isRightPassword(String encryptedPassword){
+        return this.password.equals(encryptedPassword);
+    }
 }

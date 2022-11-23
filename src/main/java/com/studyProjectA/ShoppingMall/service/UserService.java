@@ -39,9 +39,8 @@ public class UserService {
     @Transactional
     public UserDto login(LoginRequestDto loginRequestDto){
         User user = findUserByUsername(loginRequestDto.getUsername());
-        if(user.getPassword().equals(bCryptPasswordEncoder.encode(loginRequestDto.getPassword()))){
+        if(!user.isRightPassword(bCryptPasswordEncoder.encode(loginRequestDto.getPassword())))
             throw new PasswordNotEqualException();
-        }
         return UserDto.toDto(user);
     }
 
@@ -51,8 +50,7 @@ public class UserService {
     }
 
     public User findUserByUsername(String username){
-        User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-        return user;
+        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 
     public void validateUsername(String username){
@@ -82,6 +80,4 @@ public class UserService {
                 .user(user).build();
         cartRepository.save(cart);
     }
-
-
 }
