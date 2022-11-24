@@ -26,29 +26,45 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException{
         try{
-            ObjectMapper om = new ObjectMapper();
-            User user = om.readValue(request.getInputStream(), User.class);
-            UsernamePasswordAuthenticationToken authenToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            Authentication authentication = authenticationManager.authenticate(authenToken);
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            System.out.println(principalDetails);
-            return authentication;
+            User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+            System.out.println("Principal Details : " + getAuthDetails(authenticationManager
+                    .authenticate(getToken(user))));
+            return authenticationManager.authenticate(getToken(user));
         }
         catch (IOException e){
+            System.out.println("[ERROR] 인증 실패");
             throw new RuntimeException(e);
         }
     }
 
+    private PrincipalDetails getAuthDetails(Authentication authentication){
+        return (PrincipalDetails) authentication.getPrincipal();
+    }
+
+    private UsernamePasswordAuthenticationToken getToken(User user){
+        return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+    }
+
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentiation){
-        PrincipalDetails principalDetails = (PrincipalDetails) authentiation.getPrincipal();
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication){
         String jwtToken = JWT.create()
                 .withSubject("입장토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
-                .withClaim("id", principalDetails.getUser().getId())
-                .withClaim("username", principalDetails.getUser().getUsername())
+                .withExpiresAt(calculateExpirationDate())
+                .withClaim("id", getIDFromAuth(authentication))
+                .withClaim("username", getUserNameFromAuth(authentication))
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-        System.out.println(jwtToken);
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+    }
+
+    private Date calculateExpirationDate(){
+        return new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME);
+    }
+
+    private Long getIDFromAuth(Authentication authentication){
+        return getAuthDetails(authentication).getUser().getId();
+    }
+
+    private String getUserNameFromAuth(Authentication authentication){
+        return getAuthDetails(authentication).getUser().getUsername();
     }
 }
