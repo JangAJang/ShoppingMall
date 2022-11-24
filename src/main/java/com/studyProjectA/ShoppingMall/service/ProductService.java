@@ -53,7 +53,8 @@ public class ProductService {
     // 아이템 등록
     @Transactional
     public ProductResponseDto addProduct(User loginUser, ProductDto productDto){
-        Product product = setProductByDto(loginUser, new Product(), productDto);
+        Product product = new Product().makeProduct(productDto, loginUser);
+        productRepository.save(product);
         return ProductResponseDto.toDto(product);
     }
 
@@ -62,7 +63,7 @@ public class ProductService {
     public ProductResponseDto updateProduct(User loginUser, Long itemId, ProductDto productDto) {
         Product product = getProduct(itemId);
         validateUserAuthority(loginUser, product);
-        setProductByDto(loginUser, product, productDto);
+        product.makeProduct(productDto, loginUser);
         return ProductResponseDto.toDto(product);
     }
 
@@ -126,17 +127,5 @@ public class ProductService {
 
     public Product getProduct(Long id){
         return productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
-    }
-
-    public Product setProductByDto(User user, Product product, ProductDto productDto){
-        validateProductNameExistence(productDto.getProductName());
-        product.setProductName(productDto.getProductName());
-        product.setQuantity(productDto.getQuantity());
-        product.setCategory(productDto.getCategory());
-        product.setDeliveryDate(productDto.getDeliveryDate());
-        product.setPrice(productDto.getPrice());
-        product.setUser(user);
-        productRepository.save(product);
-        return product;
     }
 }

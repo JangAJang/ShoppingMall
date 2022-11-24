@@ -1,5 +1,6 @@
 package com.studyProjectA.ShoppingMall.entity;
 
+import com.studyProjectA.ShoppingMall.dto.ProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,4 +41,13 @@ public class Product {
     @Column
     private Long deliveryDate;
 
+    public Product makeProduct(ProductDto productDto, User user){
+        return Product.builder()
+                .productName(productDto.getProductName())
+                .user(user)
+                .price(productDto.getPrice())
+                .quantity(productDto.getQuantity())
+                .deliveryDate(productDto.getDeliveryDate())
+                .build();
+    }
 }
