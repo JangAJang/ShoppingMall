@@ -38,11 +38,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
         String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
                 .build().verify(replaceWordOnToken(request)).getClaim("username").asString();
-        if(username!=null){
-            User tmpEntity = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-            PrincipalDetails principalDetails = new PrincipalDetails(tmpEntity);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(isExistingUsername(username)){
+            SecurityContextHolder.getContext().setAuthentication(makeAuthenticationByUsername(username));
             chain.doFilter(request, response);
         }
     }
@@ -57,5 +54,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private boolean isJwtHeaderNotValidated(String jwtHeader){
         return jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX);
+    }
+
+    private boolean isExistingUsername(String username){
+        return username!=null;
+    }
+
+    private User findUserByUsername(String username){
+        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    }
+
+    private PrincipalDetails getUsersDetailsByUsername(String username){
+        return new PrincipalDetails(findUserByUsername(username));
+    }
+
+    private Authentication makeAuthenticationByUsername(String username){
+        PrincipalDetails principalDetails = getUsersDetailsByUsername(username);
+        return new UsernamePasswordAuthenticationToken(principalDetails
+                , null, principalDetails.getAuthorities());
     }
 }
