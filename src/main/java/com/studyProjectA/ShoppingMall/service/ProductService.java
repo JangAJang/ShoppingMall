@@ -4,7 +4,6 @@ import com.studyProjectA.ShoppingMall.dto.ProductDto;
 import com.studyProjectA.ShoppingMall.dto.ProductResponseDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.User;
-import com.studyProjectA.ShoppingMall.excpetion.ProductNameAlreadyExistsException;
 import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.UserSellerNotEqualException;
@@ -101,12 +100,6 @@ public class ProductService {
 
     public void validateUserAuthority(User loginUser, Product product){
         if(!loginUser.equals(product.getUser())) throw new UserSellerNotEqualException();
-    }
-
-    public void validateProductNameExistence(String productName){
-        for(Product product : getAllProducts()){
-            if(product.getProductName().equals(productName)) throw new ProductNameAlreadyExistsException();
-        }
     }
 
     public List<Product> getProductsByName(String name){

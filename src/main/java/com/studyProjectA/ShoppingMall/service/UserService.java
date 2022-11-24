@@ -31,7 +31,7 @@ public class UserService {
     public UserDto register(RegisterDto registerDto){
         validateRegisterDto(registerDto);
         User newUser = new User();
-        userRepository.save(newUser.makeNewUser(registerDto));
+        userRepository.save(newUser.setUser(registerDto));
         createCartForRegister(newUser);
         return UserDto.toDto(newUser);
     }

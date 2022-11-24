@@ -58,15 +58,14 @@ public class User {
         }
         return new ArrayList<>();
     }
-    public User makeNewUser(RegisterDto registerDto){
+    public User setUser(RegisterDto registerDto){
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return User.builder()
-                .username(registerDto.getUsername())
-                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
-                .email(registerDto.getEmail())
-                .role("ROLE_USER")
-                .address(registerDto.getAddress())
-                .build();
+        this.username = registerDto.getUsername();
+        this.password = bCryptPasswordEncoder.encode(registerDto.getPassword());
+        this.email = registerDto.getEmail();
+        this.role = "ROLE_USER";
+        this.address = registerDto.getAddress();
+        return this;
     }
 
     public boolean isRightPassword(String encryptedPassword){
