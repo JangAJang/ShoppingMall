@@ -91,8 +91,7 @@ public class ReviewController {
 
     private User getLoginUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        return user;
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
     }
 
 }

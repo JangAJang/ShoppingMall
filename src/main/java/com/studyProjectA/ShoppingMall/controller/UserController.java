@@ -62,6 +62,4 @@ public class UserController {
     public Response manager(){
         return Response.success();
     }
-
-
 }

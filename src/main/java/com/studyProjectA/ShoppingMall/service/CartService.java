@@ -48,8 +48,11 @@ public class CartService {
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         if(howMany > product.getQuantity())throw new ProductNotEnoughException();
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElse(
-                CartItem.builder().product(product).quantity(0).cart(cart).build()
-        );
+                CartItem.builder()
+                        .product(product)
+                        .quantity(0)
+                        .cart(cart)
+                        .build());
         cartItem.setQuantity(cartItem.getQuantity() + howMany);
         cartItemRepository.save(cartItem);
         List<CartItem> cartItems = getItemsFromCart(cart);

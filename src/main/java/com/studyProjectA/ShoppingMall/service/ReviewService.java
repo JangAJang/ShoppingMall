@@ -33,17 +33,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
 
-    // Read All
-    @Transactional(readOnly = true)
-    public List<ReviewResponseDto> getReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review review : reviews) {
-            reviewResponseDtos.add(ReviewResponseDto.toDto(review));
-        }
-        return reviewResponseDtos;
-    }
-
     @Transactional(readOnly = true)
     public List<ReviewResponseDto> getProductReviews(Long productId){
         return changeEntityToDto(getAllReviewsByProduct(productId));
@@ -76,7 +65,6 @@ public class ReviewService {
         setDtoToEntity(reviewRequestDto, review);
         review.setUser(writer);
         review.setProduct(product);
-        review.setCreateDate(LocalDate.now());
         reviewRepository.save(review);
         return ReviewResponseDto.toDto(review);
     }
@@ -89,7 +77,6 @@ public class ReviewService {
         setDtoToEntity(reviewRequestDto, review);
         review.setUser(review.getUser());
         review.setProduct(review.getProduct());
-        review.setCreateDate(review.getCreateDate());
         reviewRepository.save(review);
         return ReviewResponseDto.toDto(review);
     }
@@ -122,20 +109,17 @@ public class ReviewService {
     }
 
     public void filterByUsername(List<Review> reviews, String username){
-        for(Review review : reviews){
-            if(!review.getUser().getUsername().contains(username)) reviews.remove(review);
-        }
+        reviews.removeIf(review -> !review.getUser().getUsername().contains(username));
     }
 
     public void filterByComment(List<Review> reviews, String content){
-        for(Review review : reviews){
-            if(!review.getComment().contains(content)) reviews.remove(review);
-        }
+        reviews.removeIf(review -> !review.getComment().contains(content));
     }
 
     public void setDtoToEntity(ReviewRequestDto reviewRequestDto, Review review){
         review.setComment(reviewRequestDto.getComment());
         review.setRate(reviewRequestDto.getRate());
+        review.setCreateDate(review.getCreateDate());
     }
 
 }
