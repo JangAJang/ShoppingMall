@@ -42,12 +42,12 @@ public class Product {
     private Long deliveryDate;
 
     public Product makeProduct(ProductDto productDto, User user){
-        return Product.builder()
-                .productName(productDto.getProductName())
-                .user(user)
-                .price(productDto.getPrice())
-                .quantity(productDto.getQuantity())
-                .deliveryDate(productDto.getDeliveryDate())
-                .build();
+        this.setProductName(productDto.getProductName());
+        this.setPrice(productDto.getPrice());
+        this.setQuantity(productDto.getQuantity());
+        this.setCategory(productDto.getCategory());
+        this.setDeliveryDate(productDto.getDeliveryDate());
+        this.setUser(user);
+        return this;
     }
 }
