@@ -1,6 +1,7 @@
 package com.studyProjectA.ShoppingMall.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.studyProjectA.ShoppingMall.dto.ReviewRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Review {
 
     // 아이디
@@ -60,14 +62,4 @@ public class Review {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JsonIgnore
     private User user;
-
-    @Builder
-    public Review(Product product, Integer rate, LocalDate createDate, String comment,User user)
-    {
-        this.product = product;
-        this.rate = rate;
-        this.createDate = createDate;
-        this.comment = comment;
-        this.user = user;
-    }
 }

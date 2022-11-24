@@ -2,20 +2,15 @@ package com.studyProjectA.ShoppingMall.service;
 
 import com.studyProjectA.ShoppingMall.dto.ReviewRequestDto;
 import com.studyProjectA.ShoppingMall.dto.ReviewResponseDto;
-import com.studyProjectA.ShoppingMall.dto.UserDto;
 import com.studyProjectA.ShoppingMall.entity.Product;
 import com.studyProjectA.ShoppingMall.entity.Review;
 import com.studyProjectA.ShoppingMall.entity.User;
 import com.studyProjectA.ShoppingMall.excpetion.ProductNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.ReviewNotFoundException;
 import com.studyProjectA.ShoppingMall.excpetion.UserNotEqualsException;
-import com.studyProjectA.ShoppingMall.excpetion.UserNotFoundException;
 import com.studyProjectA.ShoppingMall.repository.ProductRepository;
 import com.studyProjectA.ShoppingMall.repository.ReviewRepository;
-import com.studyProjectA.ShoppingMall.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
