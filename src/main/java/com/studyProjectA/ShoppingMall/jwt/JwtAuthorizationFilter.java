@@ -36,12 +36,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
-        String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
-                .build().verify(replaceWordOnToken(request)).getClaim("username").asString();
+        String username = makeUsernameByRequest(request);
         if(isExistingUsername(username)){
             SecurityContextHolder.getContext().setAuthentication(makeAuthenticationByUsername(username));
             chain.doFilter(request, response);
         }
+    }
+
+    private String makeUsernameByRequest(HttpServletRequest request){
+        return JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
+                .build().verify(replaceWordOnToken(request)).getClaim("username").asString();
     }
 
     private void printJWTHeader(String jwtHeader){
